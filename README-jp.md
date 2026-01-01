@@ -1,6 +1,5 @@
 # create-specment
 
-
 [![NPM Package](.github/images/icons/npm-badge.svg)](https://www.npmjs.com/package/@plenarc/create-specment)
 [![MIT License](.github/images/icons/license-badge.svg)](LICENSE)
 
