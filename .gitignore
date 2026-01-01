@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+pnpm-debug.log*
+
+# Build outputs
+bin/
+*.tsbuildinfo
+
+# Environment variables
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Temporary files
+temp/
