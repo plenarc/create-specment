@@ -1,4 +1,4 @@
-import { TemplateConfig } from '../types/index.js';
+import type { TemplateConfig } from '../types/index.js';
 
 export const templateDefinitions: Record<string, TemplateConfig> = {
   'classic-spec': {

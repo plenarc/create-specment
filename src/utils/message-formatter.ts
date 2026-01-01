@@ -55,10 +55,10 @@ export class MessageFormatter {
   static installationStart(language: Language = LANG.EN.code): void {
     const isEn = language === LANG.EN.code;
     if (isEn) {
-      this.step('Installing dependencies...');
+      MessageFormatter.step('Installing dependencies...');
       console.log(chalk.gray('This may take a few minutes depending on your internet connection.'));
     } else {
-      this.step('依存関係をインストール中...');
+      MessageFormatter.step('依存関係をインストール中...');
       console.log(chalk.gray('インターネット接続によっては数分かかる場合があります。'));
     }
   }
@@ -66,10 +66,10 @@ export class MessageFormatter {
   static installationSkipped(projectName: string, language: Language = LANG.EN.code): void {
     const isEn = language === LANG.EN.code;
     if (isEn) {
-      this.warning('Dependency installation was skipped.');
+      MessageFormatter.warning('Dependency installation was skipped.');
       console.log(chalk.gray('You can install dependencies manually by running:'));
     } else {
-      this.warning('依存関係のインストールがスキップされました。');
+      MessageFormatter.warning('依存関係のインストールがスキップされました。');
       console.log(chalk.gray('以下のコマンドで手動でインストールできます:'));
     }
     console.log(chalk.gray(`  cd ${projectName}`));
@@ -79,10 +79,10 @@ export class MessageFormatter {
   static installationFailed(projectName: string, language: Language = LANG.EN.code): void {
     const isEn = language === LANG.EN.code;
     if (isEn) {
-      this.error('Dependency installation failed.');
+      MessageFormatter.error('Dependency installation failed.');
       console.log(chalk.gray('Please install dependencies manually:'));
     } else {
-      this.error('依存関係のインストールに失敗しました。');
+      MessageFormatter.error('依存関係のインストールに失敗しました。');
       console.log(chalk.gray('手動でインストールしてください:'));
     }
     console.log(chalk.gray(`  cd ${projectName}`));

@@ -1,29 +1,29 @@
 import { mkdir, writeFile, access } from 'fs/promises';
 import { join, resolve } from 'path';
 import { existsSync, constants } from 'fs';
-import { UserSelections } from '../types/index.js';
-import { createTemplateProcessor, TemplateProcessor } from '../utils/template-processor.js';
+import type { UserSelections } from '../types/index.js';
+import { createTemplateProcessor, type TemplateProcessor } from '../utils/template-processor.js';
 import { getTemplateDefinition } from '../templates/template-definitions.js';
 
 export async function copyTemplateFiles(selections: UserSelections, projectPath: string): Promise<void> {
   const { templates, projectName } = selections;
-  
+
   // プロジェクトパスの検証
   await validateProjectPath(projectPath);
-  
+
   // テンプレートプロセッサーを作成（最初のテンプレートをベースにする）
   const primaryTemplate = templates[0];
   const processor = await createTemplateProcessor(projectName, {
     templateName: primaryTemplate.name,
     templateDisplayName: primaryTemplate.displayName,
   });
-  
+
   // 全テンプレートのディレクトリ構造を統合
   const combinedStructure = combineTemplateStructures(templates);
-  
+
   // ディレクトリ構造を作成
   await createDirectoryStructure(projectPath, combinedStructure);
-  
+
   // 各テンプレートのファイルを生成
   for (const template of templates) {
     const templateDef = getTemplateDefinition(template.name);
@@ -31,11 +31,11 @@ export async function copyTemplateFiles(selections: UserSelections, projectPath:
       console.warn(`Template definition not found for: ${template.name}`);
       continue;
     }
-    
+
     // サンプルコンテンツを生成
     await generateSampleContent(projectPath, templateDef.sampleContent, processor);
   }
-  
+
   // 基本ファイルを生成（最初のテンプレートベース）
   await generateSidebarsConfig(projectPath, primaryTemplate.name, processor);
   await generateCustomCSS(projectPath);
@@ -48,22 +48,28 @@ function combineTemplateStructures(templates: any[]): any {
     static: new Set<string>(),
     src: new Set<string>()
   };
-  
+
   for (const template of templates) {
     const templateDef = getTemplateDefinition(template.name);
     if (templateDef?.directoryStructure) {
       if (templateDef.directoryStructure.docs) {
-        templateDef.directoryStructure.docs.forEach((dir: string) => combined.docs.add(dir));
+        for (const dir of templateDef.directoryStructure.docs) {
+          combined.docs.add(dir);
+        }
       }
       if (templateDef.directoryStructure.static) {
-        templateDef.directoryStructure.static.forEach((dir: string) => combined.static.add(dir));
+        for (const dir of templateDef.directoryStructure.static) {
+          combined.static.add(dir);
+        }
       }
       if (templateDef.directoryStructure.src) {
-        templateDef.directoryStructure.src.forEach((dir: string) => combined.src.add(dir));
+        for (const dir of templateDef.directoryStructure.src) {
+          combined.src.add(dir);
+        }
       }
     }
   }
-  
+
   return {
     docs: Array.from(combined.docs),
     static: Array.from(combined.static),
@@ -73,12 +79,12 @@ function combineTemplateStructures(templates: any[]): any {
 
 async function validateProjectPath(projectPath: string): Promise<void> {
   const resolvedPath = resolve(projectPath);
-  
+
   // ディレクトリが存在することを確認
   if (!existsSync(resolvedPath)) {
     throw new Error(`Project directory does not exist: ${resolvedPath}`);
   }
-  
+
   // 書き込み権限を確認
   try {
     await access(resolvedPath, constants.W_OK);
@@ -100,7 +106,7 @@ async function createDirectoryStructure(projectPath: string, structure: any): Pr
     const dirPath = join(projectPath, dir);
     await mkdir(dirPath, { recursive: true });
   }
-  
+
   // テンプレート固有のディレクトリを作成
   if (structure.docs) {
     for (const docDir of structure.docs) {
@@ -108,14 +114,14 @@ async function createDirectoryStructure(projectPath: string, structure: any): Pr
       await mkdir(dirPath, { recursive: true });
     }
   }
-  
+
   if (structure.static) {
     for (const staticDir of structure.static) {
       const dirPath = join(projectPath, 'static', staticDir);
       await mkdir(dirPath, { recursive: true });
     }
   }
-  
+
   if (structure.src) {
     for (const srcDir of structure.src) {
       const dirPath = join(projectPath, 'src', srcDir);
@@ -126,13 +132,13 @@ async function createDirectoryStructure(projectPath: string, structure: any): Pr
 
 async function generateTemplateFiles(projectPath: string, templateName: string, processor: TemplateProcessor): Promise<void> {
   const templateDir = join(process.cwd(), 'templates', templateName);
-  
+
   try {
     // package.json.templateを処理
     const packageJsonTemplate = join(templateDir, 'package.json.template');
     const processedPackageJson = await processor.processTemplateFile(packageJsonTemplate);
     await writeFile(join(projectPath, 'package.json'), processedPackageJson);
-    
+
     // docusaurus.config.js.templateを処理
     const configTemplate = join(templateDir, 'docusaurus.config.js.template');
     const processedConfig = await processor.processTemplateFile(configTemplate);
@@ -146,11 +152,11 @@ async function generateTemplateFiles(projectPath: string, templateName: string, 
 async function generateSampleContent(projectPath: string, sampleContent: any[], processor: TemplateProcessor): Promise<void> {
   for (const content of sampleContent) {
     const filePath = join(projectPath, content.path);
-    
+
     // ディレクトリが存在しない場合は作成
     const dirPath = resolve(filePath, '..');
     await mkdir(dirPath, { recursive: true });
-    
+
     if (content.template) {
       // テンプレート変数を置換
       const processedContent = processor.processTemplate(content.content);

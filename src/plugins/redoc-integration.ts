@@ -1,4 +1,4 @@
-import { FeatureSelection } from '../types/index.js';
+import type { FeatureSelection } from '../types/index.js';
 
 export interface RedocConfig {
   specs: RedocSpec[];
@@ -32,15 +32,15 @@ export class RedocIntegration {
   }
 
   static generateDocusaurusConfig(feature: FeatureSelection): any {
-    const config = feature.config?.redocusaurus || this.getDefaultConfig();
-    
+    const config = feature.config?.redocusaurus || RedocIntegration.getDefaultConfig();
+
     return {
       plugins: [
         [
           'redocusaurus',
           {
-            specs: config.specs || this.getDefaultConfig().specs,
-            theme: config.theme || this.getDefaultConfig().theme
+            specs: config.specs || RedocIntegration.getDefaultConfig().specs,
+            theme: config.theme || RedocIntegration.getDefaultConfig().theme
           }
         ]
       ]
@@ -59,7 +59,7 @@ info:
   title: Sample API
   description: |
     これはサンプルAPIの仕様書です。
-    
+
     This is a sample API specification.
   version: 1.0.0
   contact:

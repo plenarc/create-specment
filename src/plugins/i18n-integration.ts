@@ -1,4 +1,4 @@
-import { FeatureSelection } from '../types/index.js';
+import type { FeatureSelection } from '../types/index.js';
 import { LANG } from '../constants/languages.js';
 
 export interface I18nConfig {
@@ -36,13 +36,13 @@ export class I18nIntegration {
   }
 
   static generateDocusaurusConfig(feature: FeatureSelection): any {
-    const config = feature.config?.i18n || this.getDefaultConfig();
-    
+    const config = feature.config?.i18n || I18nIntegration.getDefaultConfig();
+
     return {
       i18n: {
         defaultLocale: config.defaultLocale,
         locales: config.locales,
-        localeConfigs: config.localeConfigs || this.getDefaultConfig().localeConfigs
+        localeConfigs: config.localeConfigs || I18nIntegration.getDefaultConfig().localeConfigs
       },
       themeConfig: {
         navbar: {
@@ -242,7 +242,7 @@ nr write-heading-ids
           "description": "Navbar item with label GitHub"
         }
       }, null, 2),
-      
+
       'i18n/ja/docusaurus-theme-classic/footer.json': JSON.stringify({
         "link.title.Documentation": {
           "message": "ドキュメント",
@@ -261,7 +261,7 @@ nr write-heading-ids
           "description": "The footer copyright"
         }
       }, null, 2),
-      
+
       'i18n/ja/code.json': JSON.stringify({
         "theme.common.editThisPage": {
           "message": "このページを編集",

@@ -1,4 +1,4 @@
-import { FeatureSelection } from '../types/index.js';
+import type { FeatureSelection } from '../types/index.js';
 import { LANG } from '../constants/languages.js';
 
 export interface SearchConfig {
@@ -23,8 +23,8 @@ export class SearchIntegration {
   }
 
   static generateDocusaurusConfig(feature: FeatureSelection): any {
-    const config = feature.config?.search || this.getDefaultConfig();
-    
+    const config = feature.config?.search || SearchIntegration.getDefaultConfig();
+
     return {
       themes: [
         [
