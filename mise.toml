@@ -1,0 +1,20 @@
+[tools]
+node = "lts"
+pnpm = "latest"
+"npm:@antfu/ni" = "latest"
+
+[env]
+NODE_ENV = "development"
+
+[settings]
+# niの自動アップデートを有効化
+auto_install = true
+
+[tasks.ni-update]
+description = "Update ni and pnpm to latest version"
+run = "mise install npm:@antfu/ni@latest pnpm@latest"
+
+[hooks]
+# プロジェクト開始時にniとpnpmを最新版に更新
+enter = "mise install npm:@antfu/ni@latest pnpm@latest"
+
