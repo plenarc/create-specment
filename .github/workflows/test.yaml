@@ -1,0 +1,52 @@
+name: Test Build on PR
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Verify Build & Test
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+
+      - name: Install ni
+        run: npm install -g @antfu/ni
+
+      - name: Install dependencies
+        run: ni
+
+      - name: Type check
+        run: nr typecheck
+
+      - name: Format check
+        run: nr format
+
+      - name: Lint
+        run: nr lint
+
+      - name: Run tests
+        run: nr test
+
+      - name: Build project
+        run: nr build
