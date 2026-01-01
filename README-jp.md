@@ -1,5 +1,13 @@
 # create-specment
 
+
+[![NPM Package](.github/images/icons/npm-badge.svg)](https://www.npmjs.com/package/@plenarc/create-specment)
+[![MIT License](.github/images/icons/license-badge.svg)](LICENSE)
+
+[English](README.md) | [日本語](README-jp.md)
+
+Demo: https://plenarc.github.io/specment/
+
 Docusaurusベースの仕様書作成に特化したインタラクティブなプロジェクト生成ツール
 
 ## 概要
@@ -32,7 +40,7 @@ Docusaurusベースの仕様書作成に特化したインタラクティブな�
     ```bash
     # mise のインストール(Linux/macOS/WSL)
     curl https://mise.run | sh
-    
+
     # シェルの設定を更新
     echo 'eval "$(mise activate bash)"' >> ~/.bashrc
     source ~/.bashrc
@@ -43,7 +51,7 @@ Docusaurusベースの仕様書作成に特化したインタラクティブな�
     # mise を使用してNode.jsをインストール
     mise install node@lts
     mise use node@lts
-    
+
     # バージョン確認
     node --version
     ```
@@ -51,8 +59,8 @@ Docusaurusベースの仕様書作成に特化したインタラクティブな�
 1. **ni(パッケージマネージャー統一ツール)**
     ```bash
     # mise を使用してniのインストール
-    mise install npm:@antfu/ni@latest
-    
+    mise use npm:@antfu/ni@latest
+
     # バージョン確認
     ni --version
     ```
@@ -102,9 +110,9 @@ create-specment my-docs
     ```
 
 1. **インタラクティブセットアップ**
-    
+
     以下の質問に答えてプロジェクトを設定します:
-    
+
     1. **プロジェクト名**: ドキュメントサイトの名前
     1. **テンプレート選択**: 用途に応じたテンプレートを選択
     1. **機能選択**: 必要な機能を選択
@@ -113,7 +121,7 @@ create-specment my-docs
     ```bash
     # 依存関係のインストール(自動実行されない場合)
     ni
-    
+
     # 開発サーバーを起動
     nr start
     ```
@@ -122,7 +130,7 @@ create-specment my-docs
     ```bash
     # 本番用ビルド
     nr build
-    
+
     # ローカルでプレビュー
     nr serve
     ```
