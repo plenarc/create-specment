@@ -1,12 +1,12 @@
-import { UserSelections } from '../types/index.js';
+import type { UserSelections } from '../types/index.js';
 import { PlantUMLIntegration } from '../plugins/plantuml-integration.js';
 import { RedocIntegration } from '../plugins/redoc-integration.js';
 import { SearchIntegration } from '../plugins/search-integration.js';
 import { I18nIntegration } from '../plugins/i18n-integration.js';
 
 export function generatePackageJson(selections: UserSelections): any {
-  const { projectName, templates, features } = selections;
-  
+  const { projectName, features } = selections;
+
   const basePackageJson: any = {
     name: projectName,
     version: '0.0.0',
@@ -22,11 +22,11 @@ export function generatePackageJson(selections: UserSelections): any {
       serve: 'docusaurus serve',
       'write-translations': 'docusaurus write-translations',
       'write-heading-ids': 'docusaurus write-heading-ids',
-      
+
       // ni/nr対応のエイリアス（niコマンドで統一的に実行可能）
       dev: 'docusaurus start',
       preview: 'docusaurus serve',
-      
+
       // 開発・運用支援コマンド
       typecheck: 'tsc --noEmit',
       lint: 'eslint src --ext .ts,.tsx,.js,.jsx',
@@ -66,12 +66,12 @@ export function generatePackageJson(selections: UserSelections): any {
 
   // Add feature-specific dependencies using dedicated integration classes
   const enabledFeatures = features.filter(f => f.enabled);
-  
+
   for (const feature of enabledFeatures) {
     let dependencies: Record<string, string> = {};
-    let devDependencies: Record<string, string> = {};
-    let scripts: Record<string, string> = {};
-    
+    const devDependencies: Record<string, string> = {};
+    const scripts: Record<string, string> = {};
+
     switch (feature.name) {
       case 'plantuml':
         dependencies = PlantUMLIntegration.getDependencies();
