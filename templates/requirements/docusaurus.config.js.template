@@ -1,0 +1,119 @@
+// @ts-check
+// Note: type annotations allow type checking and IDEs autocompletion
+
+/** @type {import('@docusaurus/types').Config} */
+const config = {
+  title: '{{projectName}}',
+  tagline: 'Requirements Specification Documentation',
+  favicon: 'img/favicon.ico',
+
+  // Set the production url of your site here
+  url: 'https://your-docusaurus-site.example.com',
+  // Set the /<baseUrl>/ pathname under which your site is served
+  baseUrl: '/',
+
+  // GitHub pages deployment config.
+  organizationName: 'your-org',
+  projectName: '{{projectName}}',
+
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'warn',
+
+  // Even if you don't use internalization, you can use this field to set useful
+  // metadata like html lang. For example, if your site is Chinese, you may want
+  // to replace "en" with "zh-Hans".
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en'],
+  },
+
+  presets: [
+    [
+      'classic',
+      /** @type {import('@docusaurus/preset-classic').Options} */
+      ({
+        docs: {
+          sidebarPath: require.resolve('./sidebars.js'),
+          editUrl: 'https://github.com/your-org/your-repo/tree/main/',
+        },
+        blog: false, // Disable blog for requirements
+        theme: {
+          customCss: require.resolve('./src/css/custom.css'),
+        },
+      }),
+    ],
+  ],
+
+  themeConfig:
+    /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
+    ({
+      // Replace with your project's social card
+      image: 'img/docusaurus-social-card.jpg',
+      navbar: {
+        title: '{{projectName}}',
+        logo: {
+          alt: '{{projectName}} Logo',
+          src: 'img/logo.svg',
+        },
+        items: [
+          {
+            type: 'docSidebar',
+            sidebarId: 'requirementsSidebar',
+            position: 'left',
+            label: 'Requirements',
+          },
+          {
+            type: 'docSidebar',
+            sidebarId: 'functionalSidebar',
+            position: 'left',
+            label: 'Functional',
+          },
+          {
+            type: 'docSidebar',
+            sidebarId: 'nonFunctionalSidebar',
+            position: 'left',
+            label: 'Non-Functional',
+          },
+          {
+            href: 'https://github.com/your-org/your-repo',
+            label: 'GitHub',
+            position: 'right',
+          },
+        ],
+      },
+      footer: {
+        style: 'dark',
+        links: [
+          {
+            title: 'Requirements',
+            items: [
+              {
+                label: 'Functional Requirements',
+                to: '/docs/functional/intro',
+              },
+              {
+                label: 'Non-Functional Requirements',
+                to: '/docs/non-functional/intro',
+              },
+            ],
+          },
+          {
+            title: 'Community',
+            items: [
+              {
+                label: 'GitHub',
+                href: 'https://github.com/your-org/your-repo',
+              },
+            ],
+          },
+        ],
+        copyright: `Copyright © ${new Date().getFullYear()} {{projectName}}. Built with Docusaurus.`,
+      },
+      prism: {
+        theme: require('prism-react-renderer/themes/github'),
+        darkTheme: require('prism-react-renderer/themes/dracula'),
+      },
+    }),
+};
+
+module.exports = config;

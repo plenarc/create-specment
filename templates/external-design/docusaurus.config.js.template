@@ -1,0 +1,123 @@
+// @ts-check
+// Note: type annotations allow type checking and IDEs autocompletion
+
+/** @type {import('@docusaurus/types').Config} */
+const config = {
+  title: '{{projectName}}',
+  tagline: 'External Design Specification Documentation',
+  favicon: 'img/favicon.ico',
+
+  // Set the production url of your site here
+  url: 'https://your-docusaurus-site.example.com',
+  // Set the /<baseUrl>/ pathname under which your site is served
+  baseUrl: '/',
+
+  // GitHub pages deployment config.
+  organizationName: 'your-org',
+  projectName: '{{projectName}}',
+
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'warn',
+
+  // Even if you don't use internalization, you can use this field to set useful
+  // metadata like html lang. For example, if your site is Chinese, you may want
+  // to replace "en" with "zh-Hans".
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en'],
+  },
+
+  presets: [
+    [
+      'classic',
+      /** @type {import('@docusaurus/preset-classic').Options} */
+      ({
+        docs: {
+          sidebarPath: require.resolve('./sidebars.js'),
+          editUrl: 'https://github.com/your-org/your-repo/tree/main/',
+        },
+        blog: false, // Disable blog for external design
+        theme: {
+          customCss: require.resolve('./src/css/custom.css'),
+        },
+      }),
+    ],
+  ],
+
+  themeConfig:
+    /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
+    ({
+      // Replace with your project's social card
+      image: 'img/docusaurus-social-card.jpg',
+      navbar: {
+        title: '{{projectName}}',
+        logo: {
+          alt: '{{projectName}} Logo',
+          src: 'img/logo.svg',
+        },
+        items: [
+          {
+            type: 'docSidebar',
+            sidebarId: 'architectureSidebar',
+            position: 'left',
+            label: 'Architecture',
+          },
+          {
+            type: 'docSidebar',
+            sidebarId: 'apiSidebar',
+            position: 'left',
+            label: 'API Design',
+          },
+          {
+            type: 'docSidebar',
+            sidebarId: 'uiSidebar',
+            position: 'left',
+            label: 'UI/UX Design',
+          },
+          {
+            href: 'https://github.com/your-org/your-repo',
+            label: 'GitHub',
+            position: 'right',
+          },
+        ],
+      },
+      footer: {
+        style: 'dark',
+        links: [
+          {
+            title: 'Design',
+            items: [
+              {
+                label: 'System Architecture',
+                to: '/docs/architecture/intro',
+              },
+              {
+                label: 'API Design',
+                to: '/docs/api/intro',
+              },
+              {
+                label: 'UI/UX Design',
+                to: '/docs/ui/intro',
+              },
+            ],
+          },
+          {
+            title: 'Community',
+            items: [
+              {
+                label: 'GitHub',
+                href: 'https://github.com/your-org/your-repo',
+              },
+            ],
+          },
+        ],
+        copyright: `Copyright © ${new Date().getFullYear()} {{projectName}}. Built with Docusaurus.`,
+      },
+      prism: {
+        theme: require('prism-react-renderer/themes/github'),
+        darkTheme: require('prism-react-renderer/themes/dracula'),
+      },
+    }),
+};
+
+module.exports = config;
