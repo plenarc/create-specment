@@ -7,7 +7,7 @@ import { LANG } from '../constants/languages.js';
 
 export function generateDocusaurusConfig(selections: UserSelections): string {
   const { projectName, templates, features } = selections;
-  const enabledFeatures = features.filter(f => f.enabled);
+  const enabledFeatures = features.filter((f) => f.enabled);
 
   // 複数テンプレートに応じた基本設定（最初のテンプレートをベースにする）
   const primaryTemplate = templates[0];
@@ -35,16 +35,11 @@ function getBaseConfigForTemplate(templateName: string, projectName: string): an
     onBrokenMarkdownLinks: 'warn',
     i18n: {
       defaultLocale: LANG.EN.code,
-      locales: [LANG.EN.code]
+      locales: [LANG.EN.code],
     },
-    presets: [
-      [
-        'classic',
-        getPresetConfigForTemplate(templateName)
-      ]
-    ],
+    presets: [['classic', getPresetConfigForTemplate(templateName)]],
     themeConfig: getThemeConfigForTemplate(templateName, projectName),
-    plugins: []
+    plugins: [],
   };
 
   return baseConfig;
@@ -55,7 +50,7 @@ function getTaglineForTemplate(templateName: string): string {
     'classic-spec': 'Classic Specification Documentation',
     'api-spec': 'API Specification Documentation',
     'technical-spec': 'Technical Specification Documentation',
-    'enterprise-spec': 'Enterprise Specification Documentation'
+    'enterprise-spec': 'Enterprise Specification Documentation',
   };
 
   return taglines[templateName] || 'Documentation Site';
@@ -65,11 +60,11 @@ function getPresetConfigForTemplate(templateName: string): any {
   const basePresetConfig = {
     docs: {
       sidebarPath: './sidebars.js',
-      editUrl: 'https://github.com/your-org/your-repo/tree/main/'
+      editUrl: 'https://github.com/your-org/your-repo/tree/main/',
     },
     theme: {
-      customCss: './src/css/custom.css'
-    }
+      customCss: './src/css/custom.css',
+    },
   };
 
   // テンプレートに応じてブログ機能を調整
@@ -78,15 +73,15 @@ function getPresetConfigForTemplate(templateName: string): any {
       ...basePresetConfig,
       blog: {
         showReadingTime: true,
-        editUrl: 'https://github.com/your-org/your-repo/tree/main/'
-      }
+        editUrl: 'https://github.com/your-org/your-repo/tree/main/',
+      },
     };
   }
 
   // 仕様書系テンプレートではブログを無効化
   return {
     ...basePresetConfig,
-    blog: false
+    blog: false,
   };
 }
 
@@ -97,19 +92,19 @@ function getThemeConfigForTemplate(templateName: string, projectName: string): a
       title: projectName,
       logo: {
         alt: `${projectName} Logo`,
-        src: 'img/logo.svg'
+        src: 'img/logo.svg',
       },
-      items: getNavbarItemsForTemplate(templateName)
+      items: getNavbarItemsForTemplate(templateName),
     },
     footer: {
       style: 'dark',
       links: getFooterLinksForTemplate(templateName),
-      copyright: `Copyright © ${new Date().getFullYear()} ${projectName}. Built with Docusaurus.`
+      copyright: `Copyright © ${new Date().getFullYear()} ${projectName}. Built with Docusaurus.`,
     },
     prism: {
-      theme: 'github',
-      darkTheme: 'dracula'
-    }
+      theme: 'prism-react-renderer/themes/github',
+      darkTheme: 'prism-react-renderer/themes/dracula',
+    },
   };
 
   return baseThemeConfig;
@@ -120,8 +115,8 @@ function getNavbarItemsForTemplate(templateName: string): any[] {
     {
       href: 'https://github.com/your-org/your-repo',
       label: 'GitHub',
-      position: 'right'
-    }
+      position: 'right',
+    },
   ];
 
   switch (templateName) {
@@ -131,9 +126,9 @@ function getNavbarItemsForTemplate(templateName: string): any[] {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Documentation'
+          label: 'Documentation',
         },
-        ...baseItems
+        ...baseItems,
       ];
 
     case 'api-spec':
@@ -142,15 +137,15 @@ function getNavbarItemsForTemplate(templateName: string): any[] {
           type: 'docSidebar',
           sidebarId: 'apiSidebar',
           position: 'left',
-          label: 'API Reference'
+          label: 'API Reference',
         },
         {
           type: 'docSidebar',
           sidebarId: 'guidesSidebar',
           position: 'left',
-          label: 'Guides'
+          label: 'Guides',
         },
-        ...baseItems
+        ...baseItems,
       ];
 
     case 'technical-spec':
@@ -159,15 +154,15 @@ function getNavbarItemsForTemplate(templateName: string): any[] {
           type: 'docSidebar',
           sidebarId: 'architectureSidebar',
           position: 'left',
-          label: 'Architecture'
+          label: 'Architecture',
         },
         {
           type: 'docSidebar',
           sidebarId: 'implementationSidebar',
           position: 'left',
-          label: 'Implementation'
+          label: 'Implementation',
         },
-        ...baseItems
+        ...baseItems,
       ];
 
     case 'enterprise-spec':
@@ -176,21 +171,21 @@ function getNavbarItemsForTemplate(templateName: string): any[] {
           type: 'docSidebar',
           sidebarId: 'overviewSidebar',
           position: 'left',
-          label: 'Overview'
+          label: 'Overview',
         },
         {
           type: 'docSidebar',
           sidebarId: 'specificationSidebar',
           position: 'left',
-          label: 'Specifications'
+          label: 'Specifications',
         },
         {
           type: 'docSidebar',
           sidebarId: 'processSidebar',
           position: 'left',
-          label: 'Processes'
+          label: 'Processes',
         },
-        ...baseItems
+        ...baseItems,
       ];
 
     default:
@@ -199,24 +194,24 @@ function getNavbarItemsForTemplate(templateName: string): any[] {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Documentation'
+          label: 'Documentation',
         },
-        ...baseItems
+        ...baseItems,
       ];
   }
 }
 
-function getFooterLinksForTemplate(templateName: string): any[] {
+function getFooterLinksForTemplate(_templateName: string): any[] {
   const baseLinks = [
     {
       title: 'Community',
       items: [
         {
           label: 'GitHub',
-          href: 'https://github.com/your-org/your-repo'
-        }
-      ]
-    }
+          href: 'https://github.com/your-org/your-repo',
+        },
+      ],
+    },
   ];
 
   const docLinks = {
@@ -224,9 +219,9 @@ function getFooterLinksForTemplate(templateName: string): any[] {
     items: [
       {
         label: 'Getting Started',
-        to: '/docs/intro'
-      }
-    ]
+        to: '/docs/intro',
+      },
+    ],
   };
 
   return [docLinks, ...baseLinks];
@@ -283,7 +278,7 @@ function validateConfig(config: any): void {
   // URL形式の検証
   try {
     new URL(config.url);
-  } catch (error) {
+  } catch (_error) {
     throw new Error(`Invalid URL format: ${config.url}`);
   }
 
@@ -294,11 +289,24 @@ function validateConfig(config: any): void {
 }
 
 function generateConfigString(config: any): string {
+  // Prismテーマの設定を特別に処理
+  let configString = JSON.stringify(config, null, 2);
+
+  // Prismテーマの文字列をrequire文に置換
+  configString = configString.replace(
+    '"prism-react-renderer/themes/github"',
+    'require("prism-react-renderer").themes.github',
+  );
+  configString = configString.replace(
+    '"prism-react-renderer/themes/dracula"',
+    'require("prism-react-renderer").themes.dracula',
+  );
+
   return `// @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
 /** @type {import('@docusaurus/types').Config} */
-const config = ${JSON.stringify(config, null, 2)};
+const config = ${configString};
 
 module.exports = config;`;
 }

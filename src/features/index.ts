@@ -11,9 +11,9 @@ export function getAvailableFeatures(): FeatureSelection[] {
       plugin: 'docusaurus-theme-plantuml',
       config: {
         plantuml: {
-          server: 'https://www.plantuml.com/plantuml'
-        }
-      }
+          server: 'https://www.plantuml.com/plantuml',
+        },
+      },
     },
     {
       name: 'redoc',
@@ -26,11 +26,11 @@ export function getAvailableFeatures(): FeatureSelection[] {
           specs: [
             {
               spec: 'static/openapi.yaml',
-              route: '/api/'
-            }
-          ]
-        }
-      }
+              route: '/api/',
+            },
+          ],
+        },
+      },
     },
     {
       name: 'i18n',
@@ -40,9 +40,9 @@ export function getAvailableFeatures(): FeatureSelection[] {
       config: {
         i18n: {
           defaultLocale: LANG.EN.code,
-          locales: [LANG.EN.code, 'ja']
-        }
-      }
-    }
+          locales: [LANG.EN.code, 'ja'],
+        },
+      },
+    },
   ];
 }

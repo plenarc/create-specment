@@ -1,11 +1,14 @@
-import { mkdir, writeFile, access } from 'fs/promises';
-import { join, resolve } from 'path';
-import { existsSync, constants } from 'fs';
+import { mkdir, writeFile, access } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
+import { existsSync, constants } from 'node:fs';
 import type { UserSelections } from '../types/index.js';
 import { createTemplateProcessor, type TemplateProcessor } from '../utils/template-processor.js';
 import { getTemplateDefinition } from '../templates/template-definitions.js';
 
-export async function copyTemplateFiles(selections: UserSelections, projectPath: string): Promise<void> {
+export async function copyTemplateFiles(
+  selections: UserSelections,
+  projectPath: string,
+): Promise<void> {
   const { templates, projectName } = selections;
 
   // プロジェクトパスの検証
@@ -46,7 +49,7 @@ function combineTemplateStructures(templates: any[]): any {
   const combined = {
     docs: new Set<string>(),
     static: new Set<string>(),
-    src: new Set<string>()
+    src: new Set<string>(),
   };
 
   for (const template of templates) {
@@ -73,7 +76,7 @@ function combineTemplateStructures(templates: any[]): any {
   return {
     docs: Array.from(combined.docs),
     static: Array.from(combined.static),
-    src: Array.from(combined.src)
+    src: Array.from(combined.src),
   };
 }
 
@@ -88,19 +91,14 @@ async function validateProjectPath(projectPath: string): Promise<void> {
   // 書き込み権限を確認
   try {
     await access(resolvedPath, constants.W_OK);
-  } catch (error) {
+  } catch (_error) {
     throw new Error(`No write permission for directory: ${resolvedPath}`);
   }
 }
 
 async function createDirectoryStructure(projectPath: string, structure: any): Promise<void> {
   // 基本ディレクトリを作成
-  const baseDirectories = [
-    'docs',
-    'src/css',
-    'src/components',
-    'static/img'
-  ];
+  const baseDirectories = ['docs', 'src/css', 'src/components', 'static/img'];
 
   for (const dir of baseDirectories) {
     const dirPath = join(projectPath, dir);
@@ -130,7 +128,11 @@ async function createDirectoryStructure(projectPath: string, structure: any): Pr
   }
 }
 
-async function generateTemplateFiles(projectPath: string, templateName: string, processor: TemplateProcessor): Promise<void> {
+async function _generateTemplateFiles(
+  projectPath: string,
+  templateName: string,
+  processor: TemplateProcessor,
+): Promise<void> {
   const templateDir = join(process.cwd(), 'templates', templateName);
 
   try {
@@ -149,13 +151,28 @@ async function generateTemplateFiles(projectPath: string, templateName: string, 
   }
 }
 
-async function generateSampleContent(projectPath: string, sampleContent: any[], processor: TemplateProcessor): Promise<void> {
+async function generateSampleContent(
+  projectPath: string,
+  sampleContent: any[],
+  processor: TemplateProcessor,
+): Promise<void> {
   for (const content of sampleContent) {
     const filePath = join(projectPath, content.path);
 
     // ディレクトリが存在しない場合は作成
     const dirPath = resolve(filePath, '..');
     await mkdir(dirPath, { recursive: true });
+
+    // 既存のディレクトリと同名のファイルを作成しようとしている場合はエラー
+    if (existsSync(filePath)) {
+      const { stat } = await import('node:fs/promises');
+      const stats = await stat(filePath);
+      if (stats.isDirectory()) {
+        throw new Error(
+          `Cannot create file '${filePath}': A directory with the same name already exists`,
+        );
+      }
+    }
 
     if (content.template) {
       // テンプレート変数を置換
@@ -168,7 +185,11 @@ async function generateSampleContent(projectPath: string, sampleContent: any[], 
   }
 }
 
-async function generateSidebarsConfig(projectPath: string, templateName: string, processor: TemplateProcessor): Promise<void> {
+async function generateSidebarsConfig(
+  projectPath: string,
+  templateName: string,
+  processor: TemplateProcessor,
+): Promise<void> {
   const sidebarConfigs = {
     'classic-spec': `// @ts-check
 
@@ -208,7 +229,7 @@ const sidebars = {
 
 module.exports = sidebars;`,
 
-    'requirements': `// @ts-check
+    requirements: `// @ts-check
 
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
@@ -293,10 +314,11 @@ const sidebars = {
   ]
 };
 
-module.exports = sidebars;`
+module.exports = sidebars;`,
   };
 
-  const sidebarContent = sidebarConfigs[templateName as keyof typeof sidebarConfigs] || sidebarConfigs['classic-spec'];
+  const sidebarContent =
+    sidebarConfigs[templateName as keyof typeof sidebarConfigs] || sidebarConfigs['classic-spec'];
   const processedContent = processor.processTemplate(sidebarContent);
   await writeFile(join(projectPath, 'sidebars.js'), processedContent);
 }
@@ -336,7 +358,10 @@ async function generateCustomCSS(projectPath: string): Promise<void> {
   await writeFile(join(projectPath, 'src', 'css', 'custom.css'), cssContent);
 }
 
-async function generateStaticFiles(projectPath: string, processor: TemplateProcessor): Promise<void> {
+async function generateStaticFiles(
+  projectPath: string,
+  processor: TemplateProcessor,
+): Promise<void> {
   // Create basic README with template variables
   const readmeTemplate = `# {{projectName}}
 

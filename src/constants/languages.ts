@@ -4,12 +4,12 @@
 export const LANG = {
   EN: {
     code: 'en' as const,
-    label: 'English'
+    label: 'English',
   },
   JP: {
     code: 'jp' as const,
-    label: '日本語'
-  }
+    label: '日本語',
+  },
 } as const;
 
-export type Language = typeof LANG[keyof typeof LANG]['code'];
+export type Language = (typeof LANG)[keyof typeof LANG]['code'];

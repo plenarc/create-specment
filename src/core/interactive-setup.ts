@@ -1,5 +1,10 @@
 import { select, isCancel, intro, text, multiselect, note } from '@clack/prompts';
-import type { CreateSpecmentOptions, UserSelections, TemplateType, FeatureSelection } from '../types/index.js';
+import type {
+  CreateSpecmentOptions,
+  UserSelections,
+  TemplateType,
+  FeatureSelection,
+} from '../types/index.js';
 import { getAvailableTemplates } from '../templates/index.js';
 import { getAvailableFeatures } from '../features/index.js';
 import { LANG, type Language } from '../constants/languages.js';
@@ -8,7 +13,7 @@ import { UserCancelledError } from '../utils/errors.js';
 export class InteractiveSetup {
   private selectedLanguage: Language = LANG.EN.code;
 
-  constructor(private options: CreateSpecmentOptions) { }
+  constructor(private options: CreateSpecmentOptions) {}
 
   get language(): Language {
     return this.selectedLanguage;
@@ -29,7 +34,7 @@ export class InteractiveSetup {
     return {
       projectName,
       templates,
-      features
+      features,
     };
   }
 
@@ -38,8 +43,8 @@ export class InteractiveSetup {
       message: 'Please select display language / 表示言語を選択してください:',
       options: [
         { value: LANG.EN.code, label: LANG.EN.label },
-        { value: LANG.JP.code, label: LANG.JP.label }
-      ]
+        { value: LANG.JP.code, label: LANG.JP.label },
+      ],
     });
 
     if (isCancel(language)) {
@@ -66,7 +71,9 @@ export class InteractiveSetup {
     if (initialName && this.options.template) {
       // Validate the provided name
       if (!/^[a-zA-Z0-9-_]+$/.test(initialName)) {
-        throw new Error(`Invalid project name: ${initialName}. Only alphanumeric characters, hyphens, and underscores are allowed`);
+        throw new Error(
+          `Invalid project name: ${initialName}. Only alphanumeric characters, hyphens, and underscores are allowed`,
+        );
       }
       return initialName;
     }
@@ -74,7 +81,9 @@ export class InteractiveSetup {
     // If initialName is provided but no template, still validate
     if (initialName) {
       if (!/^[a-zA-Z0-9-_]+$/.test(initialName)) {
-        throw new Error(`Invalid project name: ${initialName}. Only alphanumeric characters, hyphens, and underscores are allowed`);
+        throw new Error(
+          `Invalid project name: ${initialName}. Only alphanumeric characters, hyphens, and underscores are allowed`,
+        );
       }
     }
 
@@ -91,7 +100,7 @@ export class InteractiveSetup {
             ? 'Only alphanumeric characters, hyphens, and underscores are allowed'
             : '英数字、ハイフン、アンダースコアのみ使用可能です';
         }
-      }
+      },
     });
 
     if (isCancel(projectName)) {
@@ -104,7 +113,7 @@ export class InteractiveSetup {
   private async getTemplateSelection(): Promise<TemplateType[]> {
     if (this.options.template) {
       const templates = getAvailableTemplates(this.selectedLanguage);
-      const template = templates.find(t => t.name === this.options.template);
+      const template = templates.find((t) => t.name === this.options.template);
       if (!template) {
         throw new Error(`Template "${this.options.template}" not found`);
       }
@@ -122,19 +131,19 @@ export class InteractiveSetup {
       message: isEn
         ? 'Which templates would you like to use? (Multiple selection)'
         : 'どのテンプレートを使用しますか？（複数選択可）',
-      options: templates.map(template => ({
+      options: templates.map((template) => ({
         value: template.name,
         label: template.displayName,
-        hint: template.description
+        hint: template.description,
       })),
-      required: true
+      required: true,
     });
 
     if (isCancel(selectedTemplateNames)) {
       throw new UserCancelledError();
     }
 
-    const selectedTemplates = templates.filter(t => selectedTemplateNames.includes(t.name));
+    const selectedTemplates = templates.filter((t) => selectedTemplateNames.includes(t.name));
     if (selectedTemplates.length === 0) {
       throw new Error('No templates selected');
     }
@@ -148,10 +157,12 @@ export class InteractiveSetup {
     }
 
     note(
-      Array.from(allFeatures).map(feature => `• ${feature}`).join('\n'),
+      Array.from(allFeatures)
+        .map((feature) => `• ${feature}`)
+        .join('\n'),
       isEn
         ? 'Features supported by selected templates:'
-        : '選択したテンプレートがサポートする機能:'
+        : '選択したテンプレートがサポートする機能:',
     );
 
     return selectedTemplates;
@@ -168,14 +179,14 @@ export class InteractiveSetup {
       }
     }
 
-    const supportedFeatures = availableFeatures.filter(feature =>
-      allSupportedFeatures.has(feature.name)
+    const supportedFeatures = availableFeatures.filter((feature) =>
+      allSupportedFeatures.has(feature.name),
     );
 
     if (supportedFeatures.length === 0) {
-      return availableFeatures.map(feature => ({
+      return availableFeatures.map((feature) => ({
         ...feature,
-        enabled: false
+        enabled: false,
       }));
     }
 
@@ -184,21 +195,21 @@ export class InteractiveSetup {
       message: isEn
         ? 'Which additional features would you like to include?'
         : 'どの追加機能を含めますか？',
-      options: supportedFeatures.map(feature => ({
+      options: supportedFeatures.map((feature) => ({
         value: feature.name,
         label: feature.displayName,
-        hint: feature.description
+        hint: feature.description,
       })),
-      required: false
+      required: false,
     });
 
     if (isCancel(selectedFeatures)) {
       throw new UserCancelledError();
     }
 
-    return availableFeatures.map(feature => ({
+    return availableFeatures.map((feature) => ({
       ...feature,
-      enabled: selectedFeatures.includes(feature.name)
+      enabled: selectedFeatures.includes(feature.name),
     }));
   }
 }

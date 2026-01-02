@@ -2,16 +2,8 @@ name: Publish to npm
 
 on:
   push:
-    branches:
-      - main
     tags:
       - 'v*'
-  workflow_run:
-    workflows: ["Test Build on PR"]
-    types:
-      - completed
-    branches:
-      - main
 
 jobs:
   publish:
@@ -50,7 +42,23 @@ jobs:
       - name: Build project
         run: nr build
 
+      - name: Check npm authentication
+        run: |
+          echo "Checking npm authentication..."
+          ni dlx npm whoami
+          echo "Current registry:"
+          ni dlx npm config get registry
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Check package info
+        run: |
+          echo "Package name: $(ni dlx npm pkg get name)"
+          echo "Package version: $(ni dlx npm pkg get version)"
+          echo "Checking if package exists..."
+          ni dlx npm view create-specment || echo "Package does not exist (expected for first publish)"
+
       - name: Publish to npm
-        run: npm publish --access public --provenance
+        run: ni dlx npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -6,12 +6,13 @@ export interface PlantUMLConfig {
   format?: 'svg' | 'png';
 }
 
+// biome-ignore lint/complexity/noStaticOnlyClass: 統合クラスは静的メソッドを持つユーティリティ名前空間として設計されており、より良い組織化のため
 export class PlantUMLIntegration {
   static getDefaultConfig(): PlantUMLConfig {
     return {
       server: 'https://www.plantuml.com/plantuml',
       theme: 'default',
-      format: 'svg'
+      format: 'svg',
     };
   }
 
@@ -21,8 +22,8 @@ export class PlantUMLIntegration {
     return {
       themeConfig: {
         plantuml: {
-          server: config.server || 'https://www.plantuml.com/plantuml'
-        }
+          server: config.server || 'https://www.plantuml.com/plantuml',
+        },
       },
       plugins: [
         [
@@ -30,16 +31,16 @@ export class PlantUMLIntegration {
           {
             // PlantUMLテーマの設定
             theme: config.theme || 'default',
-            format: config.format || 'svg'
-          }
-        ]
-      ]
+            format: config.format || 'svg',
+          },
+        ],
+      ],
     };
   }
 
   static getDependencies(): Record<string, string> {
     return {
-      'docusaurus-theme-plantuml': '^1.0.0'
+      'docusaurus-theme-plantuml': '^1.0.0',
     };
   }
 
@@ -103,21 +104,21 @@ stop
     if (config.server && !config.server.startsWith('http')) {
       return {
         valid: false,
-        message: 'PlantUML server URL must start with http or https'
+        message: 'PlantUML server URL must start with http or https',
       };
     }
 
     if (config.theme && !['default', 'dark'].includes(config.theme)) {
       return {
         valid: false,
-        message: 'PlantUML theme must be "default" or "dark"'
+        message: 'PlantUML theme must be "default" or "dark"',
       };
     }
 
     if (config.format && !['svg', 'png'].includes(config.format)) {
       return {
         valid: false,
-        message: 'PlantUML format must be "svg" or "png"'
+        message: 'PlantUML format must be "svg" or "png"',
       };
     }
 
