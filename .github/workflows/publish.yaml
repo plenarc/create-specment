@@ -22,8 +22,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
+
+      - name: Check npm version
+        run: |
+          echo "npm version: $(npm --version)"
+          echo "Node.js version: $(node --version)"
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v3
