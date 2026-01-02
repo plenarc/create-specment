@@ -77,7 +77,7 @@ describe('TemplateProcessor', () => {
     it('should generate derived variables from project name', () => {
       const processor = new TemplateProcessor({ projectName: 'my-awesome-project' });
       processor.generateDerivedVariables();
-      
+
       const variables = processor.getVariables();
       expect(variables.projectNameCamel).toBe('myAwesomeProject');
       expect(variables.projectNamePascal).toBe('MyAwesomeProject');
@@ -88,7 +88,7 @@ describe('TemplateProcessor', () => {
     it('should handle single word project names', () => {
       const processor = new TemplateProcessor({ projectName: 'project' });
       processor.generateDerivedVariables();
-      
+
       const variables = processor.getVariables();
       expect(variables.projectNameCamel).toBe('project');
       expect(variables.projectNamePascal).toBe('Project');
@@ -101,7 +101,7 @@ describe('TemplateProcessor', () => {
     it('should set default date and year', () => {
       const processor = new TemplateProcessor({});
       const variables = processor.getVariables();
-      
+
       expect(variables.date).toMatch(/^\d{4}-\d{2}-\d{2}$/); // YYYY-MM-DD format
       expect(variables.year).toMatch(/^\d{4}$/); // YYYY format
     });
@@ -109,7 +109,7 @@ describe('TemplateProcessor', () => {
     it('should set default project name', () => {
       const processor = new TemplateProcessor({});
       const variables = processor.getVariables();
-      
+
       expect(variables.projectName).toBe('my-project');
     });
   });
@@ -119,7 +119,7 @@ describe('createTemplateProcessor', () => {
   it('should create processor with project name', async () => {
     const processor = await createTemplateProcessor('test-project');
     const variables = processor.getVariables();
-    
+
     expect(variables.projectName).toBe('test-project');
     expect(variables.description).toBe('Documentation for test-project');
   });
@@ -127,7 +127,7 @@ describe('createTemplateProcessor', () => {
   it('should include derived variables', async () => {
     const processor = await createTemplateProcessor('my-test-project');
     const variables = processor.getVariables();
-    
+
     expect(variables.projectNameCamel).toBe('myTestProject');
     expect(variables.projectNamePascal).toBe('MyTestProject');
     expect(variables.projectNameConstant).toBe('MY_TEST_PROJECT');
@@ -138,7 +138,7 @@ describe('createTemplateProcessor', () => {
       customVar: 'custom value',
     });
     const variables = processor.getVariables();
-    
+
     expect(variables.customVar).toBe('custom value');
   });
 });

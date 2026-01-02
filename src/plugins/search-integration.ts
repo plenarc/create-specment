@@ -10,6 +10,7 @@ export interface SearchConfig {
   searchResultContextMaxLength?: number;
 }
 
+// biome-ignore lint/complexity/noStaticOnlyClass: 統合クラスは静的メソッドを持つユーティリティ名前空間として設計されており、より良い組織化のため
 export class SearchIntegration {
   static getDefaultConfig(): SearchConfig {
     return {
@@ -18,7 +19,7 @@ export class SearchIntegration {
       removeDefaultStopWordFilter: false,
       highlightSearchTermsOnTargetPage: true,
       searchResultLimits: 8,
-      searchResultContextMaxLength: 50
+      searchResultContextMaxLength: 50,
     };
   }
 
@@ -41,16 +42,16 @@ export class SearchIntegration {
             indexBlog: true,
             indexPages: false,
             docsRouteBasePath: '/docs',
-            blogRouteBasePath: '/blog'
-          }
-        ]
-      ]
+            blogRouteBasePath: '/blog',
+          },
+        ],
+      ],
     };
   }
 
   static getDependencies(): Record<string, string> {
     return {
-      '@easyops-cn/docusaurus-search-local': '^0.52.2'
+      '@easyops-cn/docusaurus-search-local': '^0.52.2',
     };
   }
 
@@ -160,21 +161,28 @@ export class SearchIntegration {
     if (config.language && !Array.isArray(config.language)) {
       return {
         valid: false,
-        message: 'Search language must be an array'
+        message: 'Search language must be an array',
       };
     }
 
-    if (config.searchResultLimits && (typeof config.searchResultLimits !== 'number' || config.searchResultLimits <= 0)) {
+    if (
+      config.searchResultLimits &&
+      (typeof config.searchResultLimits !== 'number' || config.searchResultLimits <= 0)
+    ) {
       return {
         valid: false,
-        message: 'Search result limits must be a positive number'
+        message: 'Search result limits must be a positive number',
       };
     }
 
-    if (config.searchResultContextMaxLength && (typeof config.searchResultContextMaxLength !== 'number' || config.searchResultContextMaxLength <= 0)) {
+    if (
+      config.searchResultContextMaxLength &&
+      (typeof config.searchResultContextMaxLength !== 'number' ||
+        config.searchResultContextMaxLength <= 0)
+    ) {
       return {
         valid: false,
-        message: 'Search result context max length must be a positive number'
+        message: 'Search result context max length must be a positive number',
       };
     }
 

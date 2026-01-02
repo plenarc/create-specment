@@ -14,6 +14,7 @@ export interface RedocSpec {
   id?: string;
 }
 
+// biome-ignore lint/complexity/noStaticOnlyClass: 統合クラスは静的メソッドを持つユーティリティ名前空間として設計されており、より良い組織化のため
 export class RedocIntegration {
   static getDefaultConfig(): RedocConfig {
     return {
@@ -21,13 +22,13 @@ export class RedocIntegration {
         {
           spec: 'static/openapi.yaml',
           route: '/api/',
-          id: 'main-api'
-        }
+          id: 'main-api',
+        },
       ],
       theme: {
         primaryColor: '#1976d2',
-        primaryColorDark: '#1565c0'
-      }
+        primaryColorDark: '#1565c0',
+      },
     };
   }
 
@@ -40,16 +41,16 @@ export class RedocIntegration {
           'redocusaurus',
           {
             specs: config.specs || RedocIntegration.getDefaultConfig().specs,
-            theme: config.theme || RedocIntegration.getDefaultConfig().theme
-          }
-        ]
-      ]
+            theme: config.theme || RedocIntegration.getDefaultConfig().theme,
+          },
+        ],
+      ],
     };
   }
 
   static getDependencies(): Record<string, string> {
     return {
-      'redocusaurus': '^2.0.0'
+      redocusaurus: '^2.0.0',
     };
   }
 
@@ -371,7 +372,7 @@ curl -X POST "https://api.example.com/v1/users" \\
     if (!config.specs || config.specs.length === 0) {
       return {
         valid: false,
-        message: 'At least one OpenAPI spec must be configured'
+        message: 'At least one OpenAPI spec must be configured',
       };
     }
 
@@ -379,14 +380,14 @@ curl -X POST "https://api.example.com/v1/users" \\
       if (!spec.spec || !spec.route) {
         return {
           valid: false,
-          message: 'Each spec must have both "spec" and "route" properties'
+          message: 'Each spec must have both "spec" and "route" properties',
         };
       }
 
       if (!spec.route.startsWith('/')) {
         return {
           valid: false,
-          message: 'Route must start with "/"'
+          message: 'Route must start with "/"',
         };
       }
     }

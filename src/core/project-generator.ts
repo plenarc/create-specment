@@ -1,6 +1,6 @@
-import { mkdir, writeFile } from 'fs/promises';
-import { join, resolve } from 'path';
-import { existsSync } from 'fs';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
+import { existsSync } from 'node:fs';
 import { spinner, note } from '@clack/prompts';
 import type { UserSelections, CreateSpecmentOptions } from '../types/index.js';
 import { generatePackageJson } from '../generators/package-json.js';
@@ -13,7 +13,7 @@ export class ProjectGenerator {
 
   constructor(
     private selections: UserSelections,
-    private options: CreateSpecmentOptions
+    private options: CreateSpecmentOptions,
   ) {
     this.projectPath = resolve(process.cwd(), selections.projectName);
   }
@@ -48,16 +48,15 @@ export class ProjectGenerator {
         try {
           await installDependencies(this.projectPath, { verbose: false });
           s.stop('依存関係をインストールしました');
-        } catch (error) {
+        } catch (_error) {
           s.stop('依存関係のインストールに失敗しました');
           note(
             'プロジェクトは作成されましたが、依存関係のインストールに失敗しました。\n手動でインストールしてください:\n\n' +
-            `cd ${this.selections.projectName}\nni`,
-            '警告'
+              `cd ${this.selections.projectName}\nni`,
+            '警告',
           );
         }
       }
-
     } catch (error) {
       s.stop('エラーが発生しました');
       throw error;
@@ -69,12 +68,7 @@ export class ProjectGenerator {
     await mkdir(this.projectPath, { recursive: true });
 
     // Create basic directory structure
-    const directories = [
-      'docs',
-      'src/css',
-      'src/components',
-      'static/img'
-    ];
+    const directories = ['docs', 'src/css', 'src/components', 'static/img'];
 
     for (const dir of directories) {
       const dirPath = join(this.projectPath, dir);
@@ -85,17 +79,11 @@ export class ProjectGenerator {
   private async generateConfigFiles(): Promise<void> {
     // Generate package.json
     const packageJson = generatePackageJson(this.selections);
-    await writeFile(
-      join(this.projectPath, 'package.json'),
-      JSON.stringify(packageJson, null, 2)
-    );
+    await writeFile(join(this.projectPath, 'package.json'), JSON.stringify(packageJson, null, 2));
 
     // Generate docusaurus.config.js
     const docusaurusConfig = generateDocusaurusConfig(this.selections);
-    await writeFile(
-      join(this.projectPath, 'docusaurus.config.js'),
-      docusaurusConfig
-    );
+    await writeFile(join(this.projectPath, 'docusaurus.config.js'), docusaurusConfig);
   }
 
   private async copyTemplateContent(): Promise<void> {
