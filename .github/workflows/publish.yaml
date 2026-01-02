@@ -30,35 +30,32 @@ jobs:
         with:
           version: 10
 
-      - name: Install ni
-        run: npm install -g @antfu/ni
-
       - name: Install dependencies
-        run: ni
+        run: pnpm install
 
       - name: Run tests
-        run: nr test
+        run: pnpm run test
 
       - name: Build project
-        run: nr build
+        run: pnpm run build
 
       - name: Check npm authentication
         run: |
           echo "Checking npm authentication..."
-          ni dlx npm whoami
+          npm whoami
           echo "Current registry:"
-          ni dlx npm config get registry
+          npm config get registry
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Check package info
         run: |
-          echo "Package name: $(ni dlx npm pkg get name)"
-          echo "Package version: $(ni dlx npm pkg get version)"
+          echo "Package name: $(npm pkg get name)"
+          echo "Package version: $(npm pkg get version)"
           echo "Checking if package exists..."
-          ni dlx npm view create-specment || echo "Package does not exist (expected for first publish)"
+          npm view create-specment || echo "Package does not exist (expected for first publish)"
 
       - name: Publish to npm
-        run: ni dlx npm publish --access public --provenance
+        run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
