@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdirSync, rmSync, existsSync, readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { mkdirSync, rmSync, existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { InteractiveSetup } from '../core/interactive-setup.js';
 import { ProjectGenerator } from '../core/project-generator.js';
 import type { CreateSpecmentOptions, UserSelections } from '../types/index.js';
@@ -15,7 +15,7 @@ describe('End-to-End Integration Tests', () => {
     // テスト用ディレクトリの作成
     try {
       rmSync(testDir, { recursive: true, force: true });
-    } catch (error) {
+    } catch (_error) {
       // ディレクトリが存在しない場合は無視
     }
     mkdirSync(projectsDir, { recursive: true });
@@ -25,7 +25,7 @@ describe('End-to-End Integration Tests', () => {
     // テスト後のクリーンアップ
     try {
       rmSync(testDir, { recursive: true, force: true });
-    } catch (error) {
+    } catch (_error) {
       // クリーンアップエラーは無視
     }
   });
@@ -33,18 +33,18 @@ describe('End-to-End Integration Tests', () => {
   describe('Template Generation Tests', () => {
     it('should generate complete project for classic-spec template', async () => {
       const projectName = 'test-classic-spec';
-      const projectPath = join(projectsDir, projectName);
+      const _projectPath = join(projectsDir, projectName);
 
-      const options: CreateSpecmentOptions = {
+      const _options: CreateSpecmentOptions = {
         template: 'classic-spec',
         skipInstall: true,
-        verbose: false
+        verbose: false,
       };
 
       try {
         // プロジェクト生成のテスト（実際の生成は行わず、設定の検証のみ）
         const templates = getAvailableTemplates();
-        const template = templates.find(t => t.name === 'classic-spec');
+        const template = templates.find((t) => t.name === 'classic-spec');
 
         expect(template).toBeDefined();
         expect(template?.name).toBe('classic-spec');
@@ -53,7 +53,6 @@ describe('End-to-End Integration Tests', () => {
         // テンプレートの基本構造を確認
         expect(template?.features).toBeDefined();
         expect(Array.isArray(template?.features)).toBe(true);
-
       } catch (error) {
         console.error('Template classic-spec generation failed:', error);
         throw error;
@@ -65,7 +64,7 @@ describe('End-to-End Integration Tests', () => {
 
       expect(templates.length).toBeGreaterThan(0);
 
-      templates.forEach(template => {
+      templates.forEach((template) => {
         expect(template.name).toBeDefined();
         expect(template.description).toBeDefined();
         expect(template.features).toBeDefined();
@@ -80,7 +79,7 @@ describe('End-to-End Integration Tests', () => {
 
       expect(features.length).toBeGreaterThan(0);
 
-      features.forEach(feature => {
+      features.forEach((feature) => {
         expect(feature.name).toBeDefined();
         expect(feature.description).toBeDefined();
         if (feature.config) {
@@ -91,7 +90,7 @@ describe('End-to-End Integration Tests', () => {
 
     it('should validate feature combinations', () => {
       const features = getAvailableFeatures();
-      const featureNames = features.map(f => f.name);
+      const featureNames = features.map((f) => f.name);
 
       // 基本的なフィーチャーが存在することを確認
       expect(featureNames).toContain('plantuml');
@@ -105,7 +104,7 @@ describe('End-to-End Integration Tests', () => {
       const validOptions: CreateSpecmentOptions = {
         template: 'classic-spec',
         skipInstall: true,
-        verbose: false
+        verbose: false,
       };
 
       expect(validOptions.template).toBe('classic-spec');
@@ -117,7 +116,7 @@ describe('End-to-End Integration Tests', () => {
       const options: CreateSpecmentOptions = {
         template: 'classic-spec',
         skipInstall: true,
-        verbose: false
+        verbose: false,
       };
 
       expect(() => {
@@ -128,19 +127,21 @@ describe('End-to-End Integration Tests', () => {
     it('should validate ProjectGenerator instantiation', () => {
       const selections: UserSelections = {
         projectName: 'test-project',
-        templates: [{
-          name: 'classic-spec' as const,
-          displayName: 'Classic Specification',
-          description: 'Test template',
-          features: ['search']
-        }],
-        features: []
+        templates: [
+          {
+            name: 'classic-spec' as const,
+            displayName: 'Classic Specification',
+            description: 'Test template',
+            features: ['search'],
+          },
+        ],
+        features: [],
       };
 
       const options: CreateSpecmentOptions = {
         template: 'classic-spec',
         skipInstall: true,
-        verbose: false
+        verbose: false,
       };
 
       expect(() => {
@@ -152,7 +153,7 @@ describe('End-to-End Integration Tests', () => {
   describe('Error Handling Tests', () => {
     it('should handle invalid template names', () => {
       const templates = getAvailableTemplates();
-      const invalidTemplate = templates.find(t => t.name === 'nonexistent-template' as any);
+      const invalidTemplate = templates.find((t) => t.name === ('nonexistent-template' as any));
 
       expect(invalidTemplate).toBeUndefined();
     });
@@ -160,7 +161,7 @@ describe('End-to-End Integration Tests', () => {
     it('should validate project name format', () => {
       const invalidNames = ['invalid@name', 'invalid name', ''];
 
-      invalidNames.forEach(name => {
+      invalidNames.forEach((name) => {
         // プロジェクト名の検証ロジックをテスト
         const isValid = /^[a-zA-Z0-9-_]+$/.test(name) && name.length > 0;
         expect(isValid).toBe(false);
@@ -168,7 +169,7 @@ describe('End-to-End Integration Tests', () => {
 
       const validNames = ['valid-name', 'valid_name', 'validname123'];
 
-      validNames.forEach(name => {
+      validNames.forEach((name) => {
         const isValid = /^[a-zA-Z0-9-_]+$/.test(name) && name.length > 0;
         expect(isValid).toBe(true);
       });
@@ -183,9 +184,9 @@ describe('End-to-End Integration Tests', () => {
       expect(nodeVersion.startsWith('v')).toBe(true);
 
       // 必要なモジュールが利用可能かチェック
-      expect(() => require('fs')).not.toThrow();
-      expect(() => require('path')).not.toThrow();
-      expect(() => require('child_process')).not.toThrow();
+      expect(() => require('node:fs')).not.toThrow();
+      expect(() => require('node:path')).not.toThrow();
+      expect(() => require('node:child_process')).not.toThrow();
     });
 
     it('should validate package.json structure', () => {

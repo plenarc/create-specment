@@ -1,6 +1,6 @@
 {
   "name": "create-specment",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "description": "Interactive CLI tool for creating Docusaurus-based specification documentation projects",
   "type": "module",
   "author": "Plenarc",
@@ -8,7 +8,7 @@
   "main": "./bin/index.js",
   "types": "./bin/index.d.ts",
   "bin": {
-    "create-specment": "./bin/index.js"
+    "create-specment": "bin/index.js"
   },
   "keywords": [
     "cli",
@@ -28,6 +28,7 @@
     "url": "https://github.com/plenarc/create-specment/issues"
   },
   "scripts": {
+    "prebuild": "nr format && nr lint:fix",
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "vitest --run",
@@ -36,7 +37,7 @@
     "format": "biome format . --write",
     "lint": "biome lint . --diagnostic-level=error",
     "lint:fix": "biome lint . --fix",
-    "typecheck": "tsc",
+    "typecheck": "tsc --noEmit",
     "prepublishOnly": "nr build && nr test"
   },
   "dependencies": {

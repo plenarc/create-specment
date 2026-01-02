@@ -15,6 +15,7 @@ export interface LocaleConfig {
   path?: string;
 }
 
+// biome-ignore lint/complexity/noStaticOnlyClass: 統合クラスは静的メソッドを持つユーティリティ名前空間として設計されており、より良い組織化のため
 export class I18nIntegration {
   static getDefaultConfig(): I18nConfig {
     return {
@@ -24,14 +25,14 @@ export class I18nIntegration {
         [LANG.EN.code]: {
           label: 'English',
           direction: 'ltr',
-          htmlLang: 'en-US'
+          htmlLang: 'en-US',
         },
         ja: {
           label: '日本語',
           direction: 'ltr',
-          htmlLang: 'ja-JP'
-        }
-      }
+          htmlLang: 'ja-JP',
+        },
+      },
     };
   }
 
@@ -42,18 +43,18 @@ export class I18nIntegration {
       i18n: {
         defaultLocale: config.defaultLocale,
         locales: config.locales,
-        localeConfigs: config.localeConfigs || I18nIntegration.getDefaultConfig().localeConfigs
+        localeConfigs: config.localeConfigs || I18nIntegration.getDefaultConfig().localeConfigs,
       },
       themeConfig: {
         navbar: {
           items: [
             {
               type: 'localeDropdown',
-              position: 'right'
-            }
-          ]
-        }
-      }
+              position: 'right',
+            },
+          ],
+        },
+      },
     };
   }
 
@@ -228,70 +229,82 @@ nr write-heading-ids
 
   static generateLocaleFiles(): Record<string, string> {
     return {
-      'i18n/ja/docusaurus-theme-classic/navbar.json': JSON.stringify({
-        "title": {
-          "message": "ホーム",
-          "description": "The title in the navbar"
+      'i18n/ja/docusaurus-theme-classic/navbar.json': JSON.stringify(
+        {
+          title: {
+            message: 'ホーム',
+            description: 'The title in the navbar',
+          },
+          'item.label.Documentation': {
+            message: 'ドキュメント',
+            description: 'Navbar item with label Documentation',
+          },
+          'item.label.GitHub': {
+            message: 'GitHub',
+            description: 'Navbar item with label GitHub',
+          },
         },
-        "item.label.Documentation": {
-          "message": "ドキュメント",
-          "description": "Navbar item with label Documentation"
-        },
-        "item.label.GitHub": {
-          "message": "GitHub",
-          "description": "Navbar item with label GitHub"
-        }
-      }, null, 2),
+        null,
+        2,
+      ),
 
-      'i18n/ja/docusaurus-theme-classic/footer.json': JSON.stringify({
-        "link.title.Documentation": {
-          "message": "ドキュメント",
-          "description": "The title of the footer links column with title=Documentation"
+      'i18n/ja/docusaurus-theme-classic/footer.json': JSON.stringify(
+        {
+          'link.title.Documentation': {
+            message: 'ドキュメント',
+            description: 'The title of the footer links column with title=Documentation',
+          },
+          'link.title.Community': {
+            message: 'コミュニティ',
+            description: 'The title of the footer links column with title=Community',
+          },
+          'link.item.label.Getting Started': {
+            message: 'はじめに',
+            description: 'The label of footer link with label=Getting Started',
+          },
+          copyright: {
+            message: 'Copyright © {year} {projectName}. Docusaurus でビルドされています。',
+            description: 'The footer copyright',
+          },
         },
-        "link.title.Community": {
-          "message": "コミュニティ",
-          "description": "The title of the footer links column with title=Community"
-        },
-        "link.item.label.Getting Started": {
-          "message": "はじめに",
-          "description": "The label of footer link with label=Getting Started"
-        },
-        "copyright": {
-          "message": "Copyright © {year} {projectName}. Docusaurus でビルドされています。",
-          "description": "The footer copyright"
-        }
-      }, null, 2),
+        null,
+        2,
+      ),
 
-      'i18n/ja/code.json': JSON.stringify({
-        "theme.common.editThisPage": {
-          "message": "このページを編集",
-          "description": "The link label to edit the current page"
+      'i18n/ja/code.json': JSON.stringify(
+        {
+          'theme.common.editThisPage': {
+            message: 'このページを編集',
+            description: 'The link label to edit the current page',
+          },
+          'theme.common.headingLinkTitle': {
+            message: '見出しへの直接リンク',
+            description: 'Title for link to heading',
+          },
+          'theme.docs.breadcrumbs.home': {
+            message: 'ホーム',
+            description: 'The ARIA label for the home page in the breadcrumbs',
+          },
+          'theme.docs.breadcrumbs.navAriaLabel': {
+            message: 'パンくずリスト',
+            description: 'The ARIA label for the breadcrumbs',
+          },
+          'theme.docs.paginator.navAriaLabel': {
+            message: 'ドキュメントページネーション',
+            description: 'The ARIA label for the docs pagination',
+          },
+          'theme.docs.paginator.previous': {
+            message: '前へ',
+            description: 'The label used to navigate to the previous doc',
+          },
+          'theme.docs.paginator.next': {
+            message: '次へ',
+            description: 'The label used to navigate to the next doc',
+          },
         },
-        "theme.common.headingLinkTitle": {
-          "message": "見出しへの直接リンク",
-          "description": "Title for link to heading"
-        },
-        "theme.docs.breadcrumbs.home": {
-          "message": "ホーム",
-          "description": "The ARIA label for the home page in the breadcrumbs"
-        },
-        "theme.docs.breadcrumbs.navAriaLabel": {
-          "message": "パンくずリスト",
-          "description": "The ARIA label for the breadcrumbs"
-        },
-        "theme.docs.paginator.navAriaLabel": {
-          "message": "ドキュメントページネーション",
-          "description": "The ARIA label for the docs pagination"
-        },
-        "theme.docs.paginator.previous": {
-          "message": "前へ",
-          "description": "The label used to navigate to the previous doc"
-        },
-        "theme.docs.paginator.next": {
-          "message": "次へ",
-          "description": "The label used to navigate to the next doc"
-        }
-      }, null, 2)
+        null,
+        2,
+      ),
     };
   }
 
@@ -299,21 +312,21 @@ nr write-heading-ids
     if (!config.defaultLocale) {
       return {
         valid: false,
-        message: 'Default locale is required'
+        message: 'Default locale is required',
       };
     }
 
     if (!Array.isArray(config.locales) || config.locales.length === 0) {
       return {
         valid: false,
-        message: 'At least one locale must be specified'
+        message: 'At least one locale must be specified',
       };
     }
 
     if (!config.locales.includes(config.defaultLocale)) {
       return {
         valid: false,
-        message: 'Default locale must be included in locales array'
+        message: 'Default locale must be included in locales array',
       };
     }
 
@@ -324,7 +337,7 @@ nr write-heading-ids
           if (!localeConfig.label || !localeConfig.direction || !localeConfig.htmlLang) {
             return {
               valid: false,
-              message: `Locale config for "${locale}" must include label, direction, and htmlLang`
+              message: `Locale config for "${locale}" must include label, direction, and htmlLang`,
             };
           }
         }

@@ -17,7 +17,7 @@ export class CLIError extends Error {
 export function handleError(error: unknown, context?: string): void {
   const message = error instanceof Error ? error.message : String(error);
   const fullMessage = context ? `${context}: ${message}` : message;
-  
+
   cancel(fullMessage);
 }
 

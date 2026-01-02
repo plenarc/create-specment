@@ -32,40 +32,40 @@ export function generatePackageJson(selections: UserSelections): any {
       lint: 'eslint src --ext .ts,.tsx,.js,.jsx',
       'lint:fix': 'eslint src --ext .ts,.tsx,.js,.jsx --fix',
       format: 'prettier --write "src/**/*.{ts,tsx,js,jsx,md,mdx}"',
-      'format:check': 'prettier --check "src/**/*.{ts,tsx,js,jsx,md,mdx}"'
+      'format:check': 'prettier --check "src/**/*.{ts,tsx,js,jsx,md,mdx}"',
     },
     dependencies: {
       '@docusaurus/core': '^3.0.0',
       '@docusaurus/preset-classic': '^3.0.0',
       '@mdx-js/react': '^3.0.0',
-      'clsx': '^2.0.0',
+      clsx: '^2.0.0',
       'prism-react-renderer': '^2.3.0',
-      'react': '^18.0.0',
-      'react-dom': '^18.0.0'
+      react: '^18.0.0',
+      'react-dom': '^18.0.0',
     },
     devDependencies: {
       '@docusaurus/module-type-aliases': '^3.0.0',
       '@docusaurus/types': '^3.0.0',
       '@types/react': '^18.0.0',
       '@types/react-dom': '^18.0.0',
-      'typescript': '^5.0.0',
-      'eslint': '^8.0.0',
+      typescript: '^5.0.0',
+      eslint: '^8.0.0',
       '@typescript-eslint/eslint-plugin': '^6.0.0',
       '@typescript-eslint/parser': '^6.0.0',
-      'prettier': '^3.0.0'
+      prettier: '^3.0.0',
     },
     browserslist: {
       production: ['>0.5%', 'not dead', 'not op_mini all'],
-      development: ['last 3 chrome version', 'last 3 firefox version', 'last 5 safari version']
+      development: ['last 3 chrome version', 'last 3 firefox version', 'last 5 safari version'],
     },
     engines: {
-      node: '>=20.0'
-    }
+      node: '>=20.0',
+    },
     // packageManagerフィールドは削除 - niが自動検出するため
   };
 
   // Add feature-specific dependencies using dedicated integration classes
-  const enabledFeatures = features.filter(f => f.enabled);
+  const enabledFeatures = features.filter((f) => f.enabled);
 
   for (const feature of enabledFeatures) {
     let dependencies: Record<string, string> = {};
@@ -85,7 +85,7 @@ export function generatePackageJson(selections: UserSelections): any {
       case 'i18n':
         dependencies = I18nIntegration.getDependencies();
         // 多言語対応の場合、翻訳関連のスクリプトを追加
-        scripts['translate'] = 'docusaurus write-translations';
+        scripts.translate = 'docusaurus write-translations';
         scripts['translate:update'] = 'docusaurus write-translations --update-translations';
         break;
     }
@@ -97,11 +97,11 @@ export function generatePackageJson(selections: UserSelections): any {
   }
 
   // 機能に応じてスクリプトを調整
-  if (enabledFeatures.some(f => f.name === 'plantuml')) {
+  if (enabledFeatures.some((f) => f.name === 'plantuml')) {
     basePackageJson.scripts['plantuml:check'] = 'echo "PlantUML integration enabled"';
   }
 
-  if (enabledFeatures.some(f => f.name === 'redoc')) {
+  if (enabledFeatures.some((f) => f.name === 'redoc')) {
     basePackageJson.scripts['api:validate'] = 'echo "API specification validation"';
   }
 

@@ -12,7 +12,7 @@ export const templateDefinitions: Record<string, TemplateConfig> = {
     },
     defaultFeatures: ['search'],
     directoryStructure: {
-      docs: ['intro.md', 'tutorial-basics', 'tutorial-extras'],
+      docs: ['tutorial-basics', 'tutorial-extras'],
       static: ['img'],
       src: ['css', 'components'],
     },
@@ -46,7 +46,8 @@ Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new
   'project-analysis': {
     name: 'project-analysis',
     displayName: 'Project Analysis',
-    description: 'プロジェクト概要・分析用テンプレート。プロジェクトの全体像を把握するための構造を提供します。',
+    description:
+      'プロジェクト概要・分析用テンプレート。プロジェクトの全体像を把握するための構造を提供します。',
     docusaurusConfig: {
       title: 'Project Analysis & Overview Documentation',
       tagline: 'Project Analysis & Overview Documentation',
@@ -79,23 +80,23 @@ sidebar_position: 1
 ### SWOT分析
 
 #### Strengths (強み)
-- 
+-
 
 #### Weaknesses (弱み)
-- 
+-
 
 #### Opportunities (機会)
-- 
+-
 
 #### Threats (脅威)
-- 
+-
 `,
         template: true,
       },
     ],
   },
 
-  'requirements': {
+  requirements: {
     name: 'requirements',
     displayName: 'Requirements Specification',
     description: '要件定義書テンプレート。機能要件・非機能要件を体系的に整理できます。',
@@ -285,6 +286,230 @@ CoreService --> BusinessLogic
       },
     ],
   },
+
+  'api-spec': {
+    name: 'api-spec',
+    displayName: 'API Specification',
+    description: 'API仕様書テンプレート。RESTful APIの詳細な仕様を記述できます。',
+    docusaurusConfig: {
+      title: 'API Specification Documentation',
+      tagline: 'API Specification Documentation',
+      presets: [['classic', { blog: false }]],
+    },
+    defaultFeatures: ['redoc', 'search'],
+    directoryStructure: {
+      docs: ['api', 'authentication', 'endpoints'],
+      static: ['img', 'api-specs'],
+    },
+    sampleContent: [
+      {
+        path: 'docs/api/intro.md',
+        content: `---
+sidebar_position: 1
+---
+
+# API概要
+
+このセクションでは、APIの全体的な仕様について説明します。
+
+## API設計原則
+
+1. **RESTful設計**: REST原則に従ったAPI設計
+2. **一貫性**: 統一されたレスポンス形式
+3. **セキュリティ**: 適切な認証・認可機能
+
+## ベースURL
+
+\`\`\`
+https://api.example.com/v1
+\`\`\`
+
+## 認証
+
+APIへのアクセスには認証が必要です。
+
+### Bearer Token認証
+
+\`\`\`http
+Authorization: Bearer <your-token>
+\`\`\`
+
+## レスポンス形式
+
+すべてのAPIレスポンスは以下の形式に従います：
+
+\`\`\`json
+{
+  "success": true,
+  "data": {},
+  "message": "Success",
+  "timestamp": "2026-01-02T15:00:00Z"
+}
+\`\`\`
+`,
+        template: true,
+      },
+    ],
+  },
+
+  'technical-spec': {
+    name: 'technical-spec',
+    displayName: 'Technical Specification',
+    description: '技術仕様書テンプレート。システムの技術的な詳細を包括的に記述できます。',
+    docusaurusConfig: {
+      title: 'Technical Specification Documentation',
+      tagline: 'Technical Specification Documentation',
+      presets: [['classic', { blog: false }]],
+    },
+    defaultFeatures: ['plantuml', 'search'],
+    directoryStructure: {
+      docs: ['architecture', 'technology-stack', 'deployment'],
+      static: ['img', 'diagrams'],
+    },
+    sampleContent: [
+      {
+        path: 'docs/architecture/intro.md',
+        content: `---
+sidebar_position: 1
+---
+
+# 技術アーキテクチャ
+
+このセクションでは、システムの技術的なアーキテクチャについて詳細に説明します。
+
+## システム構成
+
+\`\`\`plantuml
+@startuml
+!theme plain
+
+package "Frontend Layer" {
+  [React Application]
+  [Mobile App]
+}
+
+package "API Layer" {
+  [API Gateway]
+  [Load Balancer]
+}
+
+package "Application Layer" {
+  [Microservice A]
+  [Microservice B]
+  [Microservice C]
+}
+
+package "Data Layer" {
+  [PostgreSQL]
+  [Redis Cache]
+  [File Storage]
+}
+
+[React Application] --> [API Gateway]
+[Mobile App] --> [API Gateway]
+[API Gateway] --> [Load Balancer]
+[Load Balancer] --> [Microservice A]
+[Load Balancer] --> [Microservice B]
+[Load Balancer] --> [Microservice C]
+[Microservice A] --> [PostgreSQL]
+[Microservice B] --> [Redis Cache]
+[Microservice C] --> [File Storage]
+
+@enduml
+\`\`\`
+
+## 技術スタック
+
+### フロントエンド
+- **Framework**: React 18.x
+- **State Management**: Redux Toolkit
+- **UI Library**: Material-UI
+- **Build Tool**: Vite
+
+### バックエンド
+- **Runtime**: Node.js 20.x
+- **Framework**: Express.js
+- **Database**: PostgreSQL 15.x
+- **Cache**: Redis 7.x
+
+### インフラストラクチャ
+- **Container**: Docker
+- **Orchestration**: Kubernetes
+- **Cloud Provider**: AWS
+- **CI/CD**: GitHub Actions
+`,
+        template: true,
+      },
+    ],
+  },
+
+  'enterprise-spec': {
+    name: 'enterprise-spec',
+    displayName: 'Enterprise Specification',
+    description: '企業向け仕様書テンプレート。エンタープライズレベルの要件と仕様を記述できます。',
+    docusaurusConfig: {
+      title: 'Enterprise Specification Documentation',
+      tagline: 'Enterprise Specification Documentation',
+      presets: [['classic', { blog: false }]],
+    },
+    defaultFeatures: ['search', 'i18n'],
+    directoryStructure: {
+      docs: ['business-requirements', 'compliance', 'governance'],
+      static: ['img', 'documents'],
+    },
+    sampleContent: [
+      {
+        path: 'docs/business-requirements/intro.md',
+        content: `---
+sidebar_position: 1
+---
+
+# ビジネス要件
+
+このセクションでは、エンタープライズシステムのビジネス要件について説明します。
+
+## ビジネス目標
+
+### 主要目標
+1. **業務効率化**: 既存業務プロセスの自動化により、30%の効率向上を実現
+2. **コスト削減**: システム統合により、年間運用コストを20%削減
+3. **顧客満足度向上**: レスポンス時間の短縮により、顧客満足度を向上
+
+### 成功指標（KPI）
+- **処理時間**: 平均処理時間を50%短縮
+- **エラー率**: システムエラー率を1%以下に維持
+- **可用性**: 99.9%以上のシステム稼働率
+
+## ステークホルダー
+
+### 内部ステークホルダー
+- **経営陣**: 戦略的意思決定と予算承認
+- **IT部門**: システム開発・運用・保守
+- **業務部門**: 日常業務でのシステム利用
+
+### 外部ステークホルダー
+- **顧客**: サービス利用者
+- **パートナー企業**: システム連携先
+- **監査機関**: コンプライアンス監査
+
+## コンプライアンス要件
+
+### セキュリティ基準
+- **ISO 27001**: 情報セキュリティマネジメントシステム
+- **SOC 2**: セキュリティ・可用性・処理の完全性
+
+### データ保護
+- **GDPR**: EU一般データ保護規則への準拠
+- **個人情報保護法**: 日本の個人情報保護法への準拠
+
+### 業界標準
+- **PCI DSS**: クレジットカード業界データセキュリティ基準
+- **HIPAA**: 医療情報の取り扱い基準（該当する場合）
+`,
+        template: true,
+      },
+    ],
+  },
 };
 
 export function getTemplateDefinition(templateName: string): TemplateConfig | undefined {
@@ -295,8 +520,12 @@ export function getAllTemplateNames(): string[] {
   return Object.keys(templateDefinitions);
 }
 
-export function getTemplateDisplayNames(): Array<{ name: string; displayName: string; description: string }> {
-  return Object.values(templateDefinitions).map(template => ({
+export function getTemplateDisplayNames(): Array<{
+  name: string;
+  displayName: string;
+  description: string;
+}> {
+  return Object.values(templateDefinitions).map((template) => ({
     name: template.name,
     displayName: template.displayName,
     description: template.description,

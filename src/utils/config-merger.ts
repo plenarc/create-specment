@@ -1,5 +1,3 @@
-import { UserSelections } from '../types/index.js';
-
 export interface MergeOptions {
   preserveExisting: boolean;
   allowOverwrite: boolean;
@@ -33,7 +31,7 @@ export class ConfigMerger {
       success: true,
       merged: { ...existing },
       conflicts: [],
-      warnings: []
+      warnings: [],
     };
 
     try {
@@ -42,21 +40,21 @@ export class ConfigMerger {
         existing.dependencies || {},
         incoming.dependencies || {},
         'dependencies',
-        result
+        result,
       );
 
       result.merged.devDependencies = this.mergeDependencies(
         existing.devDependencies || {},
         incoming.devDependencies || {},
         'devDependencies',
-        result
+        result,
       );
 
       // Merge scripts
       result.merged.scripts = this.mergeScripts(
         existing.scripts || {},
         incoming.scripts || {},
-        result
+        result,
       );
 
       // Merge other fields
@@ -67,31 +65,29 @@ export class ConfigMerger {
         'license',
         'homepage',
         'repository',
-        'bugs'
+        'bugs',
       ]);
 
       return result;
     } catch (error) {
       result.success = false;
-      result.warnings.push(
-        error instanceof Error ? error.message : 'Unknown error during merge'
-      );
+      result.warnings.push(error instanceof Error ? error.message : 'Unknown error during merge');
       return result;
     }
   }
 
-  mergeDocusaurusConfig(existing: string, incoming: string): MergeResult {
+  mergeDocusaurusConfig(existing: string, _incoming: string): MergeResult {
     const result: MergeResult = {
       success: true,
       merged: existing,
       conflicts: [],
-      warnings: []
+      warnings: [],
     };
 
     try {
       // For now, we'll use a simple approach of adding comments
       // In production, use a proper AST parser like @babel/parser
-      
+
       const timestamp = new Date().toISOString();
       const integrationComment = `
 // ============================================================================
@@ -110,24 +106,22 @@ export class ConfigMerger {
       const configMatch = existing.match(/(const\s+config\s*=)/);
       if (configMatch && configMatch.index !== undefined) {
         const insertPosition = configMatch.index;
-        result.merged = 
-          existing.slice(0, insertPosition) +
-          integrationComment +
-          existing.slice(insertPosition);
+        result.merged =
+          existing.slice(0, insertPosition) + integrationComment + existing.slice(insertPosition);
       } else {
         // Fallback: add at the beginning
         result.merged = integrationComment + existing;
       }
 
       result.warnings.push(
-        'Docusaurus config integration is basic. Please review the generated configuration.'
+        'Docusaurus config integration is basic. Please review the generated configuration.',
       );
 
       return result;
     } catch (error) {
       result.success = false;
       result.warnings.push(
-        error instanceof Error ? error.message : 'Unknown error during config merge'
+        error instanceof Error ? error.message : 'Unknown error during config merge',
       );
       return result;
     }
@@ -137,7 +131,7 @@ export class ConfigMerger {
     existing: Record<string, string>,
     incoming: Record<string, string>,
     section: string,
-    result: MergeResult
+    result: MergeResult,
   ): Record<string, string> {
     const merged = { ...existing };
 
@@ -150,7 +144,7 @@ export class ConfigMerger {
             existing: existing[pkg],
             incoming: version,
             resolution: this.options.preserveExisting ? 'keep_existing' : 'use_incoming',
-            reason: 'Version conflict detected'
+            reason: 'Version conflict detected',
           };
 
           result.conflicts.push(conflict);
@@ -158,14 +152,12 @@ export class ConfigMerger {
           if (this.options.preserveExisting) {
             // Keep existing version
             result.warnings.push(
-              `Keeping existing version of ${pkg}: ${existing[pkg]} (incoming: ${version})`
+              `Keeping existing version of ${pkg}: ${existing[pkg]} (incoming: ${version})`,
             );
           } else {
             // Use incoming version
             merged[pkg] = version;
-            result.warnings.push(
-              `Updated ${pkg} from ${existing[pkg]} to ${version}`
-            );
+            result.warnings.push(`Updated ${pkg} from ${existing[pkg]} to ${version}`);
           }
         }
       } else {
@@ -183,7 +175,7 @@ export class ConfigMerger {
   private mergeScripts(
     existing: Record<string, string>,
     incoming: Record<string, string>,
-    result: MergeResult
+    result: MergeResult,
   ): Record<string, string> {
     const merged = { ...existing };
 
@@ -195,7 +187,7 @@ export class ConfigMerger {
             existing: existing[script],
             incoming: command,
             resolution: this.options.preserveExisting ? 'keep_existing' : 'use_incoming',
-            reason: 'Script command conflict'
+            reason: 'Script command conflict',
           };
 
           result.conflicts.push(conflict);
@@ -203,11 +195,11 @@ export class ConfigMerger {
           if (!this.options.preserveExisting && this.options.allowOverwrite) {
             merged[script] = command;
             result.warnings.push(
-              `Updated script '${script}' from '${existing[script]}' to '${command}'`
+              `Updated script '${script}' from '${existing[script]}' to '${command}'`,
             );
           } else {
             result.warnings.push(
-              `Keeping existing script '${script}': ${existing[script]} (incoming: ${command})`
+              `Keeping existing script '${script}': ${existing[script]} (incoming: ${command})`,
             );
           }
         }
@@ -228,7 +220,7 @@ export class ConfigMerger {
     incoming: any,
     merged: any,
     result: MergeResult,
-    fields: string[]
+    fields: string[],
   ): void {
     for (const field of fields) {
       if (incoming[field] && !existing[field]) {
@@ -242,12 +234,12 @@ export class ConfigMerger {
           existing: existing[field],
           incoming: incoming[field],
           resolution: 'keep_existing',
-          reason: 'Field value conflict'
+          reason: 'Field value conflict',
         };
 
         result.conflicts.push(conflict);
         result.warnings.push(
-          `Keeping existing ${field}: ${existing[field]} (incoming: ${incoming[field]})`
+          `Keeping existing ${field}: ${existing[field]} (incoming: ${incoming[field]})`,
         );
       }
     }
@@ -257,13 +249,13 @@ export class ConfigMerger {
   static createSafePackageJsonMerge(
     existing: any,
     incoming: any,
-    options: Partial<MergeOptions> = {}
+    options: Partial<MergeOptions> = {},
   ): MergeResult {
     const merger = new ConfigMerger({
       preserveExisting: true,
       allowOverwrite: false,
       verbose: false,
-      ...options
+      ...options,
     });
 
     return merger.mergePackageJson(existing, incoming);
@@ -272,13 +264,13 @@ export class ConfigMerger {
   static createSafeDocusaurusConfigMerge(
     existing: string,
     incoming: string,
-    options: Partial<MergeOptions> = {}
+    options: Partial<MergeOptions> = {},
   ): MergeResult {
     const merger = new ConfigMerger({
       preserveExisting: true,
       allowOverwrite: false,
       verbose: false,
-      ...options
+      ...options,
     });
 
     return merger.mergeDocusaurusConfig(existing, incoming);
@@ -291,8 +283,8 @@ export class ConfigMerger {
     const clean2 = version2.replace(/[\^~]/, '');
 
     // Simple major version check
-    const major1 = parseInt(clean1.split('.')[0]);
-    const major2 = parseInt(clean2.split('.')[0]);
+    const major1 = parseInt(clean1.split('.')[0], 10);
+    const major2 = parseInt(clean2.split('.')[0], 10);
 
     return major1 === major2;
   }

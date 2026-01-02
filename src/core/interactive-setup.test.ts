@@ -9,7 +9,7 @@ vi.mock('@clack/prompts', () => ({
   intro: vi.fn(),
   text: vi.fn(),
   multiselect: vi.fn(),
-  note: vi.fn()
+  note: vi.fn(),
 }));
 
 // テンプレートとフィーチャーをモック
@@ -19,9 +19,9 @@ vi.mock('../templates/index.js', () => ({
       name: 'classic-spec',
       displayName: 'Classic Specification',
       description: 'Test template',
-      features: ['plantuml']
-    }
-  ])
+      features: ['plantuml'],
+    },
+  ]),
 }));
 
 vi.mock('../features/index.js', () => ({
@@ -30,9 +30,9 @@ vi.mock('../features/index.js', () => ({
       name: 'plantuml',
       displayName: 'PlantUML',
       description: 'PlantUML integration',
-      enabled: false
-    }
-  ])
+      enabled: false,
+    },
+  ]),
 }));
 
 describe('InteractiveSetup with Validation', () => {
@@ -43,12 +43,12 @@ describe('InteractiveSetup with Validation', () => {
     mockOptions = {
       template: undefined,
       skipInstall: false,
-      verbose: false
+      verbose: false,
     };
     setup = new InteractiveSetup(mockOptions);
 
     // console.logをモック
-    vi.spyOn(console, 'log').mockImplementation(() => { });
+    vi.spyOn(console, 'log').mockImplementation(() => {});
 
     // モックの戻り値を設定
     const { select, text, multiselect } = vi.mocked(await import('@clack/prompts'));
@@ -62,7 +62,7 @@ describe('InteractiveSetup with Validation', () => {
       const options: CreateSpecmentOptions = {
         template: 'classic-spec',
         skipInstall: false,
-        verbose: false
+        verbose: false,
       };
 
       const setupWithTemplate = new InteractiveSetup(options);
@@ -81,7 +81,7 @@ describe('InteractiveSetup with Validation', () => {
       const options: CreateSpecmentOptions = {
         template: 'classic-spec',
         skipInstall: false,
-        verbose: false
+        verbose: false,
       };
 
       const setupWithTemplate = new InteractiveSetup(options);
@@ -94,7 +94,7 @@ describe('InteractiveSetup with Validation', () => {
       const options: CreateSpecmentOptions = {
         template: 'invalid-template',
         skipInstall: false,
-        verbose: false
+        verbose: false,
       };
 
       const setupWithTemplate = new InteractiveSetup(options);

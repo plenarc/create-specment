@@ -27,11 +27,17 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": [
-      "src/**/*",
-      "*.ts",
-      "*.js",
-      "*.json"
-    ]
-  }
+    "includes": ["src/**/*", "*.ts", "*.tsx", "*.js", "*.jsx", "*.json"]
+  },
+  "overrides": [
+    {
+      "includes": ["*.ts", "*.tsx"],
+      "linter": {
+        "enabled": true
+      },
+      "formatter": {
+        "enabled": true
+      }
+    }
+  ]
 }

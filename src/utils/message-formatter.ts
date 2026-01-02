@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { LANG, type Language } from '../constants/languages.js';
 
+// biome-ignore lint/complexity/noStaticOnlyClass: MessageFormatterは一貫したメッセージフォーマットのための静的メソッドを持つユーティリティクラスとして設計されている
 export class MessageFormatter {
   static success(message: string): void {
     console.log(chalk.green(`✅ ${message}`));

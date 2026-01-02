@@ -1,5 +1,4 @@
-import { readFile } from 'fs/promises';
-import { join } from 'path';
+import { readFile } from 'node:fs/promises';
 
 export interface TemplateVariables {
   projectName: string;
@@ -59,7 +58,7 @@ export class TemplateProcessor {
    */
   async processTemplateFiles(templatePaths: string[]): Promise<Record<string, string>> {
     const results: Record<string, string> = {};
-    
+
     for (const templatePath of templatePaths) {
       try {
         const processedContent = await this.processTemplateFile(templatePath);
@@ -69,7 +68,7 @@ export class TemplateProcessor {
         throw error;
       }
     }
-    
+
     return results;
   }
 
@@ -99,16 +98,16 @@ export class TemplateProcessor {
    */
   generateDerivedVariables(): void {
     const projectName = this.variables.projectName;
-    
+
     // kebab-case から camelCase への変換
     const camelCaseName = projectName.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-    
+
     // kebab-case から PascalCase への変換
     const pascalCaseName = camelCaseName.charAt(0).toUpperCase() + camelCaseName.slice(1);
-    
+
     // CONSTANT_CASE への変換
     const constantCaseName = projectName.replace(/-/g, '_').toUpperCase();
-    
+
     // 派生変数を設定
     this.setVariables({
       projectNameCamel: camelCaseName,
@@ -124,23 +123,23 @@ export class TemplateProcessor {
  */
 export async function getUserInfo(): Promise<{ name?: string; email?: string }> {
   try {
-    const { execSync } = await import('child_process');
-    
+    const { execSync } = await import('node:child_process');
+
     let name: string | undefined;
     let email: string | undefined;
-    
+
     try {
       name = execSync('git config user.name', { encoding: 'utf-8' }).trim();
     } catch {
       // Git設定が見つからない場合は無視
     }
-    
+
     try {
       email = execSync('git config user.email', { encoding: 'utf-8' }).trim();
     } catch {
       // Git設定が見つからない場合は無視
     }
-    
+
     return { name, email };
   } catch {
     return {};
@@ -152,10 +151,10 @@ export async function getUserInfo(): Promise<{ name?: string; email?: string }> 
  */
 export async function createTemplateProcessor(
   projectName: string,
-  additionalVariables: Record<string, string> = {}
+  additionalVariables: Record<string, string> = {},
 ): Promise<TemplateProcessor> {
   const userInfo = await getUserInfo();
-  
+
   const processor = new TemplateProcessor({
     projectName,
     author: userInfo.name,
@@ -163,9 +162,9 @@ export async function createTemplateProcessor(
     description: `Documentation for ${projectName}`,
     ...additionalVariables,
   });
-  
+
   // 派生変数を生成
   processor.generateDerivedVariables();
-  
+
   return processor;
 }

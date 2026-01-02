@@ -9,12 +9,17 @@ const program = new Command();
 
 program
   .name('create-specment')
-  .description('Interactive CLI tool for creating Docusaurus-based specification documentation projects')
+  .description(
+    'Interactive CLI tool for creating Docusaurus-based specification documentation projects',
+  )
   .version(version);
 
 program
   .argument('[project-name]', 'Name of the project to create')
-  .option('-t, --template <template>', 'Template to use (classic-spec, api-spec, technical-spec, enterprise-spec)')
+  .option(
+    '-t, --template <template>',
+    'Template to use (classic-spec, api-spec, technical-spec, enterprise-spec)',
+  )
   .option('--skip-install', 'Skip package installation')
   .option('--verbose', 'Enable verbose logging')
   .action(async (projectName: string | undefined, options) => {
@@ -25,12 +30,12 @@ program
         // Exit cleanly without error message
         return;
       }
-      
+
       if (error instanceof CLIError) {
         console.error(error.message);
         return;
       }
-      
+
       console.error('Error:', error instanceof Error ? error.message : 'Unknown error');
       throw error;
     }
