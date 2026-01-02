@@ -62,8 +62,20 @@ export class InteractiveSetup {
   }
 
   private async getProjectName(initialName?: string): Promise<string> {
+    // Non-interactive mode with template option - still validate the name
     if (initialName && this.options.template) {
+      // Validate the provided name
+      if (!/^[a-zA-Z0-9-_]+$/.test(initialName)) {
+        throw new Error(`Invalid project name: ${initialName}. Only alphanumeric characters, hyphens, and underscores are allowed`);
+      }
       return initialName;
+    }
+
+    // If initialName is provided but no template, still validate
+    if (initialName) {
+      if (!/^[a-zA-Z0-9-_]+$/.test(initialName)) {
+        throw new Error(`Invalid project name: ${initialName}. Only alphanumeric characters, hyphens, and underscores are allowed`);
+      }
     }
 
     const isEn = this.selectedLanguage === LANG.EN.code;

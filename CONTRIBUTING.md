@@ -6,11 +6,11 @@ create-specmentへの貢献に興味を持っていただき、ありがとう�
 
 ### 前提条件
 
-- Node.js 20.0.0以上
-- [ni](https://github.com/antfu/ni)パッケージマネージャー（推奨）
-- [mise](https://mise.jdx.dev/) Node.jsバージョン管理用（推奨）
-- Git
-- コードエディター（VS Code推奨）
+1. [mise](https://mise.jdx.dev/) Node.jsバージョン管理用（推奨）
+1. [ni](https://github.com/antfu/ni)パッケージマネージャー（推奨）
+1. Node.js 20.0.0以上
+1. Git
+1. コードエディター（VS Code など）
 
 ### 開発環境のセットアップ
 
@@ -20,28 +20,28 @@ create-specmentへの貢献に興味を持っていただき、ありがとう�
    cd create-specment
    ```
 
-2. **依存関係のインストール**
+1. **依存関係のインストール**
    ```bash
    ni
    ```
 
-3. **開発環境のセットアップ**
+1. **開発環境のセットアップ**
    ```bash
    # miseを使用する場合
    mise install
    mise use
-   
+
    # セットアップを確認
    node --version
    npm --version
    ```
 
-4. **テストを実行**
+1. **テストを実行**
    ```bash
    nr test
    ```
 
-5. **プロジェクトをビルド**
+1. **プロジェクトをビルド**
    ```bash
    nr build
    ```
@@ -76,10 +76,10 @@ git checkout -b feature/your-feature-name
 
 ### 2. 変更を行う
 
-- 既存のコードスタイルと規約に従う
-- 新しいコードにはTypeScript型を追加
-- パブリックAPIにはJSDocコメントを含める
-- 新機能にはテストを書く
+1. 既存のコードスタイルと規約に従う
+1. 新しいコードにはTypeScript型を追加
+1. パブリックAPIにはJSDocコメントを含める
+1. 新機能にはテストを書く
 
 ### 3. 変更をテスト
 
@@ -261,19 +261,19 @@ export function validateProjectName(name: string): boolean {
 
 ### READMEの更新
 
-- 新機能のREADME.mdを更新
-- 新機能の例を追加
-- 必要に応じてトラブルシューティングセクションを更新
-- ドキュメントをコード変更と同期させる
+1. 新機能のREADME.mdを更新
+1. 新機能の例を追加
+1. 必要に応じてトラブルシューティングセクションを更新
+1. ドキュメントをコード変更と同期させる
 
 ## 🐛 バグレポート
 
 ### レポート前に
 
 1. 既存のissueを検索
-2. 最新バージョンを試す
-3. トラブルシューティングガイドを確認
-4. 問題を再現
+1. 最新バージョンを試す
+1. トラブルシューティングガイドを確認
+1. 問題を再現
 
 ### バグレポートテンプレート
 
@@ -283,8 +283,8 @@ export function validateProjectName(name: string): boolean {
 
 ## 再現手順
 1. `create-specment my-project`を実行
-2. テンプレート'classic-spec'を選択
-3. 生成中にエラーが発生
+1. テンプレート'classic-spec'を選択
+1. 生成中にエラーが発生
 
 ## 期待される動作
 プロジェクトが正常に生成されるべき。
@@ -293,10 +293,10 @@ export function validateProjectName(name: string): boolean {
 エラーメッセージ: \"Template not found\"
 
 ## 環境
-- OS: Ubuntu 22.04 (WSL2)
-- Node.js: 20.17.0
-- npm: 9.6.7
-- create-specment: 1.0.0
+1. OS: Ubuntu 22.04 (WSL2)
+1. Node.js: 20.17.0
+1. npm: 9.6.7
+1. create-specment: 1.0.0
 
 ## 追加コンテキスト
 追加情報やスクリーンショット。
@@ -307,9 +307,9 @@ export function validateProjectName(name: string): boolean {
 ### リクエスト前に
 
 1. 機能が既に存在するかチェック
-2. 既存の機能リクエストを検索
-3. プロジェクトスコープに適合するか検討
-4. 実装アプローチを考える
+1. 既存の機能リクエストを検索
+1. プロジェクトスコープに適合するか検討
+1. 実装アプローチを考える
 
 ### 機能リクエストテンプレート
 
@@ -335,10 +335,10 @@ export function validateProjectName(name: string): boolean {
 ### 提出前に
 
 1. 全テストが通ることを確認
-2. ドキュメントを更新
-3. 新機能にテストを追加
-4. コードスタイルガイドラインに従う
-5. 最新のmainブランチにリベース
+1. ドキュメントを更新
+1. 新機能にテストを追加
+1. コードスタイルガイドラインに従う
+1. 最新のmainブランチにリベース
 
 ### PRテンプレート
 
@@ -385,44 +385,43 @@ export function validateProjectName(name: string): boolean {
 ### リリースチェックリスト
 
 1. package.jsonのバージョンを更新
-2. CHANGELOG.mdを更新
-3. リリースタグを作成
-4. npmに公開
-5. GitHubリリースを作成
-6. ドキュメントを更新
+1. CHANGELOG.mdを更新
+1. リリースタグを作成
+1. npmに公開
+1. GitHubリリースを作成
+1. ドキュメントを更新
 
 ## 🤝 コミュニティガイドライン
 
 ### 行動規範
 
-- 敬意を持ち包括的である
-- 新参者を歓迎する
-- 建設的なフィードバックを提供
-- 人ではなく問題に焦点を当てる
-- 他者の学習と成長を助ける
+1. 敬意を持ち包括的である
+1. 新参者を歓迎する
+1. 建設的なフィードバックを提供
+1. 人ではなく問題に焦点を当てる
+1. 他者の学習と成長を助ける
 
 ### コミュニケーション
 
-- バグレポートにはGitHub Issuesを使用
-- 質問にはGitHub Discussionsを使用
-- コード変更にはプルリクエストを使用
-- コミュニケーションは明確で簡潔に
-- コンテキストと例を提供
+1. バグレポートにはGitHub Issuesを使用
+1. 質問にはGitHub Discussionsを使用
+1. コード変更にはプルリクエストを使用
+1. コミュニケーションは明確で簡潔に
+1. コンテキストと例を提供
 
 ## 📞 ヘルプの取得
 
 ### リソース
 
-- [README.md](README.md) - プロジェクト概要と使用方法
-- [GitHub Issues](https://github.com/your-org/create-specment/issues) - バグレポートと機能リクエスト
-- [GitHub Discussions](https://github.com/your-org/create-specment/discussions) - 質問とコミュニティ
-- [Docusaurus Documentation](https://docusaurus.io/) - 基盤プラットフォームドキュメント
+1. [README.md](README.md) - プロジェクト概要と使用方法
+1. [GitHub Issues](https://github.com/your-org/create-specment/issues) - バグレポートと機能リクエスト
+1. [GitHub Discussions](https://github.com/your-org/create-specment/discussions) - 質問とコミュニティ
+1. [Docusaurus Documentation](https://docusaurus.io/) - 基盤プラットフォームドキュメント
 
 ### 連絡先
 
-- GitHub Issues: 技術的問題
-- GitHub Discussions: 一般的な質問
-- Email: [maintainer@example.com] - セキュリティ問題のみ
+1. GitHub Issues: 技術的問題
+1. GitHub Discussions: 一般的な質問
 
 ---
 
