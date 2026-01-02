@@ -41,21 +41,13 @@ jobs:
 
       - name: Check npm authentication
         run: |
-          echo "Checking npm authentication..."
-          npm whoami
-          echo "Current registry:"
-          npm config get registry
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          echo "Using Trusted Publishing (OIDC)"
+          echo "Registry URL: $(npm config get registry)"
 
-      - name: Check package info
+      - name: Check package ownership
         run: |
-          echo "Package name: $(npm pkg get name)"
-          echo "Package version: $(npm pkg get version)"
-          echo "Checking if package exists..."
-          npm view create-specment || echo "Package does not exist (expected for first publish)"
+          echo "Checking package ownership..."
+          npm owner ls create-specment || echo "Package does not exist or no access"
 
       - name: Publish to npm
         run: npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
