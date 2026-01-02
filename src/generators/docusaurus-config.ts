@@ -1,4 +1,4 @@
-import { UserSelections } from '../types/index.js';
+import type { UserSelections } from '../types/index.js';
 import { PlantUMLIntegration } from '../plugins/plantuml-integration.js';
 import { RedocIntegration } from '../plugins/redoc-integration.js';
 import { SearchIntegration } from '../plugins/search-integration.js';
@@ -8,17 +8,17 @@ import { LANG } from '../constants/languages.js';
 export function generateDocusaurusConfig(selections: UserSelections): string {
   const { projectName, templates, features } = selections;
   const enabledFeatures = features.filter(f => f.enabled);
-  
+
   // 複数テンプレートに応じた基本設定（最初のテンプレートをベースにする）
   const primaryTemplate = templates[0];
   const baseConfig = getBaseConfigForTemplate(primaryTemplate.name, projectName);
-  
+
   // 機能に応じた設定を追加
   const config = applyFeatureConfigurations(baseConfig, enabledFeatures);
-  
+
   // 設定の妥当性を検証
   validateConfig(config);
-  
+
   return generateConfigString(config);
 }
 
@@ -57,7 +57,7 @@ function getTaglineForTemplate(templateName: string): string {
     'technical-spec': 'Technical Specification Documentation',
     'enterprise-spec': 'Enterprise Specification Documentation'
   };
-  
+
   return taglines[templateName] || 'Documentation Site';
 }
 
@@ -135,7 +135,7 @@ function getNavbarItemsForTemplate(templateName: string): any[] {
         },
         ...baseItems
       ];
-    
+
     case 'api-spec':
       return [
         {
@@ -152,7 +152,7 @@ function getNavbarItemsForTemplate(templateName: string): any[] {
         },
         ...baseItems
       ];
-    
+
     case 'technical-spec':
       return [
         {
@@ -169,7 +169,7 @@ function getNavbarItemsForTemplate(templateName: string): any[] {
         },
         ...baseItems
       ];
-    
+
     case 'enterprise-spec':
       return [
         {
@@ -192,7 +192,7 @@ function getNavbarItemsForTemplate(templateName: string): any[] {
         },
         ...baseItems
       ];
-    
+
     default:
       return [
         {
@@ -236,7 +236,7 @@ function applyFeatureConfigurations(config: any, enabledFeatures: any[]): any {
   // Add feature-specific configurations using dedicated integration classes
   for (const feature of enabledFeatures) {
     let featureConfig: any = {};
-    
+
     switch (feature.name) {
       case 'plantuml':
         featureConfig = PlantUMLIntegration.generateDocusaurusConfig(feature);
@@ -273,7 +273,7 @@ function applyFeatureConfigurations(config: any, enabledFeatures: any[]): any {
 function validateConfig(config: any): void {
   // 必須フィールドの検証
   const requiredFields = ['title', 'url', 'baseUrl', 'presets', 'themeConfig'];
-  
+
   for (const field of requiredFields) {
     if (!config[field]) {
       throw new Error(`Required configuration field missing: ${field}`);
@@ -305,7 +305,7 @@ module.exports = config;`;
 
 function mergeDeep(target: any, source: any): any {
   const result = { ...target };
-  
+
   for (const key in source) {
     if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
       result[key] = mergeDeep(result[key] || {}, source[key]);
@@ -313,6 +313,6 @@ function mergeDeep(target: any, source: any): any {
       result[key] = source[key];
     }
   }
-  
+
   return result;
 }

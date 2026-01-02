@@ -2,7 +2,7 @@ import { mkdir, writeFile } from 'fs/promises';
 import { join, resolve } from 'path';
 import { existsSync } from 'fs';
 import { spinner, note } from '@clack/prompts';
-import { UserSelections, CreateSpecmentOptions } from '../types/index.js';
+import type { UserSelections, CreateSpecmentOptions } from '../types/index.js';
 import { generatePackageJson } from '../generators/package-json.js';
 import { generateDocusaurusConfig } from '../generators/docusaurus-config.js';
 import { copyTemplateFiles } from '../generators/template-files.js';

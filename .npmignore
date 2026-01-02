@@ -1,0 +1,42 @@
+# Source files
+src/
+tsconfig.json
+tsconfig.test.json
+
+# Development files
+.vscode/
+.kiro/
+vitest.config.ts
+biome.jsonc
+mise.toml
+
+# Test files
+**/*.test.ts
+**/*.test.js
+
+# Documentation (except README.md)
+README-jp.md
+CONTRIBUTING.md
+TROUBLESHOOTING.md
+CHANGELOG.md
+
+# Build artifacts
+node_modules/
+.pnpm-store/
+pnpm-lock.yaml
+
+# Temporary directories
+temp/
+test-docs/
+specment/
+
+# Git
+.git/
+.gitignore
+
+# CI/CD
+.github/
+
+# Logs
+*.log
+npm-debug.log*
