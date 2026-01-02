@@ -1,4 +1,4 @@
-import { FeatureSelection } from '../types/index.js';
+import type { FeatureSelection } from '../types/index.js';
 import { LANG } from '../constants/languages.js';
 
 export function getAvailableFeatures(): FeatureSelection[] {

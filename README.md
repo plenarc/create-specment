@@ -1,5 +1,12 @@
 # create-specment
 
+[![NPM Package](.github/images/icons/npm-badge.svg)](https://www.npmjs.com/package/@plenarc/create-specment)
+[![MIT License](.github/images/icons/license-badge.svg)](LICENSE)
+
+[English](README.md) | [日本語](README-jp.md)
+
+Demo: https://plenarc.github.io/specment/
+
 Interactive project generator specialized for creating Docusaurus-based specification documentation
 
 ## Overview
@@ -34,7 +41,7 @@ The following software must be installed:
     ```bash
     # Install mise (Linux/macOS/WSL)
     curl https://mise.run | sh
-    
+
     # Update shell configuration
     echo 'eval "$(mise activate bash)"' >> ~/.bashrc
     source ~/.bashrc
@@ -46,7 +53,7 @@ The following software must be installed:
     # Install Node.js using mise
     mise install node@lts
     mise use node@lts
-    
+
     # Check version
     node --version
     ```
@@ -55,8 +62,8 @@ The following software must be installed:
 
     ```bash
     # Install ni using mise
-    mise install npm:@antfu/ni@latest
-    
+    mise use npm:@antfu/ni@latest
+
     # Check version
     ni --version
     ```
@@ -107,9 +114,9 @@ create-specment my-docs
     ```
 
 1. **Interactive Setup**
-    
+
     Configure your project by answering the following questions:
-    
+
     1. **Language Selection**: Choose display language (English/Japanese)
     1. **Project Name**: Name of your documentation site
     1. **Template Selection**: Choose templates based on your use case (multiple selection)
@@ -120,7 +127,7 @@ create-specment my-docs
     ```bash
     # Install dependencies (if not automatically executed)
     ni
-    
+
     # Start development server
     nr start
     ```
@@ -130,7 +137,7 @@ create-specment my-docs
     ```bash
     # Production build
     nr build
-    
+
     # Local preview
     nr serve
     ```

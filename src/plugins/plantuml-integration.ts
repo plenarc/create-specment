@@ -1,4 +1,4 @@
-import { FeatureSelection } from '../types/index.js';
+import type { FeatureSelection } from '../types/index.js';
 
 export interface PlantUMLConfig {
   server?: string;
@@ -16,8 +16,8 @@ export class PlantUMLIntegration {
   }
 
   static generateDocusaurusConfig(feature: FeatureSelection): any {
-    const config = feature.config?.plantuml || this.getDefaultConfig();
-    
+    const config = feature.config?.plantuml || PlantUMLIntegration.getDefaultConfig();
+
     return {
       themeConfig: {
         plantuml: {

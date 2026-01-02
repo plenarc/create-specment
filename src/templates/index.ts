@@ -1,4 +1,4 @@
-import { TemplateType } from '../types/index.js';
+import type { TemplateType } from '../types/index.js';
 import { LANG, type Language } from '../constants/languages.js';
 
 interface TemplateInfo {

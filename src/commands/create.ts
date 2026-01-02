@@ -1,5 +1,5 @@
 import { outro, cancel } from '@clack/prompts';
-import { CreateSpecmentOptions } from '../types/index.js';
+import type { CreateSpecmentOptions } from '../types/index.js';
 import { InteractiveSetup } from '../core/interactive-setup.js';
 import { ProjectGenerator } from '../core/project-generator.js';
 import { MessageFormatter } from '../utils/message-formatter.js';
@@ -12,13 +12,13 @@ export async function createSpecmentProject(
   try {
     const setup = new InteractiveSetup(options);
     const selections = await setup.run(projectName);
-    
+
     const generator = new ProjectGenerator(selections, options);
     await generator.generate();
 
     // Show completion message
     outro('🎉 プロジェクトが正常に作成されました！');
-    
+
     MessageFormatter.completion(selections.projectName, setup.language);
 
   } catch (error) {
@@ -26,12 +26,12 @@ export async function createSpecmentProject(
       // Exit cleanly without showing error message
       return;
     }
-    
+
     if (error instanceof CLIError) {
       handleError(error.message);
       throw error;
     }
-    
+
     const message = error instanceof Error ? error.message : 'Unknown error';
     handleError(message, 'エラー');
     throw error;

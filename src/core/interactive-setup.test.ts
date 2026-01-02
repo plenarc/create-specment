@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { InteractiveSetup } from './interactive-setup.js';
-import { CreateSpecmentOptions } from '../types/index.js';
+import type { CreateSpecmentOptions } from '../types/index.js';
 
 // @clack/promptsをモック
 vi.mock('@clack/prompts', () => ({
@@ -46,10 +46,10 @@ describe('InteractiveSetup with Validation', () => {
       verbose: false
     };
     setup = new InteractiveSetup(mockOptions);
-    
+
     // console.logをモック
-    vi.spyOn(console, 'log').mockImplementation(() => {});
-    
+    vi.spyOn(console, 'log').mockImplementation(() => { });
+
     // モックの戻り値を設定
     const { select, text, multiselect } = vi.mocked(await import('@clack/prompts'));
     select.mockResolvedValue('en');
@@ -64,9 +64,9 @@ describe('InteractiveSetup with Validation', () => {
         skipInstall: false,
         verbose: false
       };
-      
+
       const setupWithTemplate = new InteractiveSetup(options);
-      
+
       // 有効なプロジェクト名でテスト
       try {
         const result = await setupWithTemplate.run('valid-project');
@@ -83,9 +83,9 @@ describe('InteractiveSetup with Validation', () => {
         skipInstall: false,
         verbose: false
       };
-      
+
       const setupWithTemplate = new InteractiveSetup(options);
-      
+
       // 無効なプロジェクト名でテスト
       await expect(setupWithTemplate.run('invalid@project')).rejects.toThrow();
     });
@@ -96,9 +96,9 @@ describe('InteractiveSetup with Validation', () => {
         skipInstall: false,
         verbose: false
       };
-      
+
       const setupWithTemplate = new InteractiveSetup(options);
-      
+
       await expect(setupWithTemplate.run('valid-project')).rejects.toThrow();
     });
   });

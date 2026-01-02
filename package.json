@@ -1,6 +1,6 @@
 {
   "name": "create-specment",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Interactive CLI tool for creating Docusaurus-based specification documentation projects",
   "type": "module",
   "author": "Plenarc",
@@ -34,10 +34,10 @@
     "test:watch": "vitest",
     "check": "biome check --apply .",
     "format": "biome format . --write",
-    "lint": "biome lint .",
+    "lint": "biome lint . --diagnostic-level=error",
     "lint:fix": "biome lint . --fix",
     "typecheck": "tsc",
-    "prepublishOnly": "nr build"
+    "prepublishOnly": "nr build && nr test"
   },
   "dependencies": {
     "@antfu/ni": "^28.0.0",
