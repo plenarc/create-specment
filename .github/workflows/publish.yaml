@@ -39,15 +39,5 @@ jobs:
       - name: Build project
         run: pnpm run build
 
-      - name: Check npm authentication
-        run: |
-          echo "Using Trusted Publishing (OIDC)"
-          echo "Registry URL: $(npm config get registry)"
-
-      - name: Check package ownership
-        run: |
-          echo "Checking package ownership..."
-          npm owner ls create-specment || echo "Package does not exist or no access"
-
       - name: Publish to npm
-        run: npm publish --access public --provenance
+        run: npm publish
