@@ -1,4 +1,4 @@
-import { outro, cancel } from '@clack/prompts';
+import { outro } from '@clack/prompts';
 import type { CreateSpecmentOptions } from '../types/index.js';
 import { InteractiveSetup } from '../core/interactive-setup.js';
 import { ProjectGenerator } from '../core/project-generator.js';
@@ -7,7 +7,7 @@ import { UserCancelledError, CLIError, handleError } from '../utils/errors.js';
 
 export async function createSpecmentProject(
   projectName: string | undefined,
-  options: CreateSpecmentOptions
+  options: CreateSpecmentOptions,
 ): Promise<void> {
   try {
     const setup = new InteractiveSetup(options);
@@ -20,7 +20,6 @@ export async function createSpecmentProject(
     outro('🎉 プロジェクトが正常に作成されました！');
 
     MessageFormatter.completion(selections.projectName, setup.language);
-
   } catch (error) {
     if (error instanceof UserCancelledError) {
       // Exit cleanly without showing error message

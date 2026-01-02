@@ -9,7 +9,7 @@ export default defineConfig({
     hookTimeout: 30000,
     watch: false, // デフォルトでwatchモードを無効化
     typecheck: {
-      tsconfig: './tsconfig.test.json'
-    }
+      tsconfig: './tsconfig.test.json',
+    },
   },
 });

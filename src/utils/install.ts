@@ -1,21 +1,26 @@
-import { spawn } from 'child_process';
+import { spawn } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 export interface InstallOptions {
   verbose?: boolean;
 }
 
 export async function installDependencies(
-  projectPath: string, 
-  options: InstallOptions = {}
+  projectPath: string,
+  options: InstallOptions = {},
 ): Promise<void> {
   const { verbose = false } = options;
-  
+
+  // パッケージマネージャーを検出
+  const packageManager = detectPackageManager(projectPath);
+
   return new Promise((resolve, reject) => {
-    // niコマンドを使用（パッケージマネージャー統一）
-    const child = spawn('ni', [], {
+    const installCommand = getInstallCommand(packageManager);
+    const child = spawn(installCommand.command, installCommand.args, {
       cwd: projectPath,
       stdio: verbose ? 'inherit' : 'pipe',
-      shell: true
+      shell: true,
     });
 
     let errorOutput = '';
@@ -30,7 +35,11 @@ export async function installDependencies(
       if (code === 0) {
         resolve();
       } else {
-        reject(new Error(`Installation failed with exit code ${code}${errorOutput ? `\n${errorOutput}` : ''}`));
+        reject(
+          new Error(
+            `Installation failed with exit code ${code}${errorOutput ? `\n${errorOutput}` : ''}`,
+          ),
+        );
       }
     });
 
@@ -39,13 +48,38 @@ export async function installDependencies(
     });
 
     // タイムアウト処理（5分）
-    const timeout = setTimeout(() => {
-      child.kill('SIGTERM');
-      reject(new Error('Installation timed out after 5 minutes'));
-    }, 5 * 60 * 1000);
+    const timeout = setTimeout(
+      () => {
+        child.kill('SIGTERM');
+        reject(new Error('Installation timed out after 5 minutes'));
+      },
+      5 * 60 * 1000,
+    );
 
     child.on('close', () => {
       clearTimeout(timeout);
     });
   });
+}
+
+function detectPackageManager(projectPath: string): 'pnpm' | 'yarn' | 'npm' {
+  // lockfileの存在を確認してパッケージマネージャーを検出
+  if (existsSync(join(projectPath, '..', 'pnpm-lock.yaml'))) {
+    return 'pnpm';
+  }
+  if (existsSync(join(projectPath, '..', 'yarn.lock'))) {
+    return 'yarn';
+  }
+  return 'npm';
+}
+
+function getInstallCommand(packageManager: string): { command: string; args: string[] } {
+  switch (packageManager) {
+    case 'pnpm':
+      return { command: 'pnpm', args: ['install'] };
+    case 'yarn':
+      return { command: 'yarn', args: ['install'] };
+    default:
+      return { command: 'npm', args: ['install'] };
+  }
 }
