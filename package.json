@@ -1,6 +1,6 @@
 {
   "name": "create-specment",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Interactive CLI tool for creating Docusaurus-based specification documentation projects",
   "type": "module",
   "author": "Plenarc",
