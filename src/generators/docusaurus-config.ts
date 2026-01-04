@@ -1,326 +1,251 @@
 import type { UserSelections } from '../types/index.js';
-import { PlantUMLIntegration } from '../plugins/plantuml-integration.js';
-import { RedocIntegration } from '../plugins/redoc-integration.js';
-import { SearchIntegration } from '../plugins/search-integration.js';
-import { I18nIntegration } from '../plugins/i18n-integration.js';
-import { LANG } from '../constants/languages.js';
 
 export function generateDocusaurusConfig(selections: UserSelections): string {
   const { projectName, templates, features } = selections;
   const enabledFeatures = features.filter((f) => f.enabled);
 
-  // 複数テンプレートに応じた基本設定（最初のテンプレートをベースにする）
-  const primaryTemplate = templates[0];
-  const baseConfig = getBaseConfigForTemplate(primaryTemplate.name, projectName);
+  // 機能フラグ
+  const hasPlantUML = enabledFeatures.some(f => f.name === 'plantuml');
+  const hasMermaid = enabledFeatures.some(f => f.name === 'mermaid');
+  const hasRedoc = enabledFeatures.some(f => f.name === 'redoc');
 
-  // 機能に応じた設定を追加
-  const config = applyFeatureConfigurations(baseConfig, enabledFeatures);
-
-  // 設定の妥当性を検証
-  validateConfig(config);
-
-  return generateConfigString(config);
+  return generateConfigString(templates, enabledFeatures, hasPlantUML, hasMermaid, hasRedoc, projectName);
 }
 
-function getBaseConfigForTemplate(templateName: string, projectName: string): any {
-  const baseConfig: any = {
-    title: projectName,
-    tagline: getTaglineForTemplate(templateName),
-    favicon: 'img/favicon.ico',
-    url: 'https://your-docusaurus-site.example.com',
-    baseUrl: '/',
-    organizationName: 'your-org',
-    projectName: projectName,
-    onBrokenLinks: 'throw',
-    onBrokenMarkdownLinks: 'warn',
-    i18n: {
-      defaultLocale: LANG.EN.code,
-      locales: [LANG.EN.code],
-    },
-    presets: [['classic', getPresetConfigForTemplate(templateName)]],
-    themeConfig: getThemeConfigForTemplate(templateName, projectName),
-    plugins: [],
-  };
+const makeI18n = (): string => {
+  return `
+  i18n: {
+    defaultLocale: 'ja',
+    locales: ['ja'],
+  },
+  `;
+};
 
-  return baseConfig;
-}
+const makeMarkdown = (hasMermaid: boolean): string => {
+  return hasMermaid ? `
+  markdown: {
+    mermaid: true,
+  },` : '';
+};
 
-function getTaglineForTemplate(templateName: string): string {
-  const taglines: Record<string, string> = {
-    'classic-spec': 'Classic Specification Documentation',
-    'api-spec': 'API Specification Documentation',
-    'technical-spec': 'Technical Specification Documentation',
-    'enterprise-spec': 'Enterprise Specification Documentation',
-  };
-
-  return taglines[templateName] || 'Documentation Site';
-}
-
-function getPresetConfigForTemplate(templateName: string): any {
-  const basePresetConfig = {
-    docs: {
-      sidebarPath: './sidebars.js',
-      editUrl: 'https://github.com/your-org/your-repo/tree/main/',
-    },
-    theme: {
-      customCss: './src/css/custom.css',
-    },
-  };
-
-  // テンプレートに応じてブログ機能を調整
-  if (templateName === 'classic-spec') {
-    return {
-      ...basePresetConfig,
-      blog: {
-        showReadingTime: true,
-        editUrl: 'https://github.com/your-org/your-repo/tree/main/',
+const makePresets = (hasRedoc: boolean): string => {
+  const baseText = {
+    classic: `[
+      'classic',
+      {
+        docs: {
+          sidebarPath: './sidebars.ts',
+        },
+        blog: false,
+        theme: {
+          customCss: './src/css/custom.css',
+        },
+      } satisfies Preset.Options,
+    ]`,
+    redoc: `[
+      'redocusaurus',
+      {
+        specs: [
+          {
+            id: 'api-spec',
+            spec: 'openapi/openapi-single.yaml',
+            route: '/api/',
+          },
+        ],
+        theme: {
+          primaryColor: '#1976d2',
+        },
       },
-    };
+    ]`,
+  };
+
+  return [
+    baseText.classic,
+    hasRedoc && baseText.redoc,
+  ].filter(Boolean).join(',\n    ');
+};
+
+const makeThemes = (hasPlantUML: boolean, hasMermaid: boolean): string => {
+  const baseText = {
+    search: `[
+      require.resolve('@easyops-cn/docusaurus-search-local'),
+      {
+        language: ['jp'],
+        hashed: true,
+        highlightSearchTermsOnTargetPage: true,
+      },
+    ]`,
+    plantUML: `require.resolve('docusaurus-theme-plantuml')`,
+    mermaid: `'@docusaurus/theme-mermaid'`,
+  };
+
+  return [
+    baseText.search,
+    hasPlantUML && baseText.plantUML,
+    hasMermaid && baseText.mermaid,
+  ].filter(Boolean).join(',\n    ');
+};
+
+
+const makeNavbarItems = (templates: any[], enabledFeatures: any[]): string => {
+  const templateNavItems: Record<string, { label: string; docId: string }> = {
+    'project-analysis': { label: 'プロジェクト概要・分析', docId: 'overview/index' },
+    'requirements': { label: '要件定義', docId: 'requirements/index' },
+    'external-design': { label: '外部設計', docId: 'external/index' },
+    'internal-design': { label: '内部設計', docId: 'internal/index' },
+  };
+
+  let navbarItems = '[';
+
+  // 選択されたテンプレートに応じてナビゲーション項目を追加
+  for (const template of templates) {
+    const navItem = templateNavItems[template.name];
+    if (navItem) {
+      navbarItems += `
+        {
+          label: '${navItem.label}',
+          type: 'doc',
+          position: 'left',
+          docId: '${navItem.docId}',
+        },`;
+    }
   }
 
-  // 仕様書系テンプレートではブログを無効化
-  return {
-    ...basePresetConfig,
-    blog: false,
-  };
+  // redoc機能が有効な場合はAPIリンクを追加
+  const hasRedocFeature = enabledFeatures.some(f => f.name === 'redoc');
+  if (hasRedocFeature) {
+    navbarItems += `
+        {
+          label: 'API',
+          position: 'left',
+          to: '/api/',
+        },`;
+  }
+
+  // GitHubリンクを追加
+  navbarItems += `
+        {
+          href: isGithubActions ? \`https://github.com/\${organizationValue}/\${projectValue}\` : 'http://localhost:3000',
+          label: 'GitHub',
+          position: 'right',
+        },
+      ]`;
+
+  return navbarItems;
 }
 
-function getThemeConfigForTemplate(templateName: string, projectName: string): any {
-  const baseThemeConfig = {
+function generateConfigString(templates: any[], enabledFeatures: any[], hasPlantUML: boolean, hasMermaid: boolean, hasRedoc: boolean, projectName: string): string {
+  const i18n = makeI18n();
+  const markdown = makeMarkdown(hasMermaid);
+  const presets = makePresets(hasRedoc);
+  const themes = makeThemes(hasPlantUML, hasMermaid);
+
+  // 選択されたテンプレートに応じてナビゲーション項目を動的に生成
+  const navbarItems = makeNavbarItems(templates, enabledFeatures);
+
+  // TypeScript形式で設定を生成
+  return `import type * as Preset from '@docusaurus/preset-classic';
+import type { Config } from '@docusaurus/types';
+import { themes as prismThemes } from 'prism-react-renderer';
+
+// GitHub pages deployment config.
+// ToDo: 最初に編集する必要がある箇所
+const titleValue = 'プロジェクト名';
+const descriptionValue = 'プロジェクト概要。xxxのためのシステムです';
+const organizationValue = 'your-org';
+const projectValue = '${projectName}';
+const urlValue = \`https://\${organizationValue}.github.io\`;
+const baseUrlValue = \`/\${projectValue}/\`;
+
+// ToDo: Since I don't think GitHub Pages will be used in actual operation, this area needs to be edited according to the environment.
+// ToDo: 実運用時にGitHub Pagesは使わないと思うので、この辺りは環境に合わせて要編集する
+const isGithubActions = process.env.GITHUB_ACTIONS === 'true';
+
+const config: Config = {
+  title: titleValue,
+  tagline: descriptionValue,
+  favicon: 'img/favicon.ico',
+
+  url: isGithubActions ? urlValue : 'http://localhost:3000',
+  baseUrl: isGithubActions ? baseUrlValue : '/',
+
+  organizationName: organizationValue,
+  projectName: projectValue,
+  trailingSlash: false,
+
+  onBrokenLinks: 'warn',
+  onBrokenMarkdownLinks: 'warn',
+
+  ${i18n}
+
+  ${markdown}
+
+  presets: [
+    ${presets}
+  ],
+
+  themeConfig: {
     image: 'img/docusaurus-social-card.jpg',
+    docs: {
+      sidebar: {
+        hideable: true,
+        autoCollapseCategories: true,
+      },
+    },
     navbar: {
-      title: projectName,
+      title: titleValue,
       logo: {
-        alt: `${projectName} Logo`,
+        alt: titleValue,
         src: 'img/logo.svg',
       },
-      items: getNavbarItemsForTemplate(templateName),
+      items: ${navbarItems}
     },
     footer: {
       style: 'dark',
-      links: getFooterLinksForTemplate(templateName),
-      copyright: `Copyright © ${new Date().getFullYear()} ${projectName}. Built with Docusaurus.`,
-    },
-    prism: {
-      theme: 'prism-react-renderer/themes/github',
-      darkTheme: 'prism-react-renderer/themes/dracula',
-    },
-  };
-
-  return baseThemeConfig;
-}
-
-function getNavbarItemsForTemplate(templateName: string): any[] {
-  const baseItems = [
-    {
-      href: 'https://github.com/your-org/your-repo',
-      label: 'GitHub',
-      position: 'right',
-    },
-  ];
-
-  switch (templateName) {
-    case 'classic-spec':
-      return [
+      links: [
         {
-          type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
-          position: 'left',
-          label: 'Documentation',
-        },
-        ...baseItems,
-      ];
-
-    case 'api-spec':
-      return [
-        {
-          type: 'docSidebar',
-          sidebarId: 'apiSidebar',
-          position: 'left',
-          label: 'API Reference',
+          title: 'Community',
+          items: [
+            {
+              label: 'Slack (Sample)',
+              href: 'https://slack.com/intl/ja-jp',
+            },
+            {
+              label: 'GitHub Discussions',
+              href: 'https://github.com/plenarc/create-specment/discussions',
+            },
+          ],
         },
         {
-          type: 'docSidebar',
-          sidebarId: 'guidesSidebar',
-          position: 'left',
-          label: 'Guides',
-        },
-        ...baseItems,
-      ];
-
-    case 'technical-spec':
-      return [
-        {
-          type: 'docSidebar',
-          sidebarId: 'architectureSidebar',
-          position: 'left',
-          label: 'Architecture',
-        },
-        {
-          type: 'docSidebar',
-          sidebarId: 'implementationSidebar',
-          position: 'left',
-          label: 'Implementation',
-        },
-        ...baseItems,
-      ];
-
-    case 'enterprise-spec':
-      return [
-        {
-          type: 'docSidebar',
-          sidebarId: 'overviewSidebar',
-          position: 'left',
-          label: 'Overview',
-        },
-        {
-          type: 'docSidebar',
-          sidebarId: 'specificationSidebar',
-          position: 'left',
-          label: 'Specifications',
-        },
-        {
-          type: 'docSidebar',
-          sidebarId: 'processSidebar',
-          position: 'left',
-          label: 'Processes',
-        },
-        ...baseItems,
-      ];
-
-    default:
-      return [
-        {
-          type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
-          position: 'left',
-          label: 'Documentation',
-        },
-        ...baseItems,
-      ];
-  }
-}
-
-function getFooterLinksForTemplate(_templateName: string): any[] {
-  const baseLinks = [
-    {
-      title: 'Community',
-      items: [
-        {
-          label: 'GitHub',
-          href: 'https://github.com/your-org/your-repo',
+          title: 'More',
+          items: [
+            {
+              label: 'Changelog',
+              href: 'https://github.com/plenarc/create-specment/blob/main/CHANGELOG.md',
+            },
+            {
+              label: 'GitHub: Create Specment',
+              href: 'https://github.com/plenarc/create-specment',
+            },
+            {
+              label: 'Docusaurus',
+              href: 'https://docusaurus.io/',
+            },
+          ],
         },
       ],
+      copyright: \`Copyright © \${new Date().getFullYear()} \${titleValue}, Inc. Built with Specment.\`,
     },
-  ];
+    prism: {
+      theme: prismThemes.github,
+      darkTheme: prismThemes.dracula,
+    },
+  } satisfies Preset.ThemeConfig,
 
-  const docLinks = {
-    title: 'Documentation',
-    items: [
-      {
-        label: 'Getting Started',
-        to: '/docs/intro',
-      },
-    ],
-  };
+  themes: [
+    ${themes}
+  ],
+};
 
-  return [docLinks, ...baseLinks];
-}
-
-function applyFeatureConfigurations(config: any, enabledFeatures: any[]): any {
-  // Add feature-specific configurations using dedicated integration classes
-  for (const feature of enabledFeatures) {
-    let featureConfig: any = {};
-
-    switch (feature.name) {
-      case 'plantuml':
-        featureConfig = PlantUMLIntegration.generateDocusaurusConfig(feature);
-        break;
-      case 'redoc':
-        featureConfig = RedocIntegration.generateDocusaurusConfig(feature);
-        break;
-      case 'search':
-        featureConfig = SearchIntegration.generateDocusaurusConfig(feature);
-        break;
-      case 'i18n':
-        featureConfig = I18nIntegration.generateDocusaurusConfig(feature);
-        break;
-    }
-
-    // Merge feature configuration into main config
-    if (featureConfig.themeConfig) {
-      config.themeConfig = mergeDeep(config.themeConfig, featureConfig.themeConfig);
-    }
-    if (featureConfig.plugins) {
-      config.plugins.push(...featureConfig.plugins);
-    }
-    if (featureConfig.i18n) {
-      config.i18n = { ...config.i18n, ...featureConfig.i18n };
-    }
-    if (featureConfig.presets) {
-      config.presets.push(...featureConfig.presets);
-    }
-  }
-
-  return config;
-}
-
-function validateConfig(config: any): void {
-  // 必須フィールドの検証
-  const requiredFields = ['title', 'url', 'baseUrl', 'presets', 'themeConfig'];
-
-  for (const field of requiredFields) {
-    if (!config[field]) {
-      throw new Error(`Required configuration field missing: ${field}`);
-    }
-  }
-
-  // URL形式の検証
-  try {
-    new URL(config.url);
-  } catch (_error) {
-    throw new Error(`Invalid URL format: ${config.url}`);
-  }
-
-  // プリセット設定の検証
-  if (!Array.isArray(config.presets) || config.presets.length === 0) {
-    throw new Error('At least one preset must be configured');
-  }
-}
-
-function generateConfigString(config: any): string {
-  // Prismテーマの設定を特別に処理
-  let configString = JSON.stringify(config, null, 2);
-
-  // Prismテーマの文字列をrequire文に置換
-  configString = configString.replace(
-    '"prism-react-renderer/themes/github"',
-    'require("prism-react-renderer").themes.github',
-  );
-  configString = configString.replace(
-    '"prism-react-renderer/themes/dracula"',
-    'require("prism-react-renderer").themes.dracula',
-  );
-
-  return `// @ts-check
-// Note: type annotations allow type checking and IDEs autocompletion
-
-/** @type {import('@docusaurus/types').Config} */
-const config = ${configString};
-
-module.exports = config;`;
-}
-
-function mergeDeep(target: any, source: any): any {
-  const result = { ...target };
-
-  for (const key in source) {
-    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-      result[key] = mergeDeep(result[key] || {}, source[key]);
-    } else {
-      result[key] = source[key];
-    }
-  }
-
-  return result;
+export default config;`;
 }

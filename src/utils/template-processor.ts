@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile } from 'fs/promises';
 
 export interface TemplateVariables {
   projectName: string;
@@ -123,7 +123,7 @@ export class TemplateProcessor {
  */
 export async function getUserInfo(): Promise<{ name?: string; email?: string }> {
   try {
-    const { execSync } = await import('node:child_process');
+    const { execSync } = await import('child_process');
 
     let name: string | undefined;
     let email: string | undefined;
