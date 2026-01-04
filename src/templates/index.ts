@@ -16,52 +16,64 @@ interface TemplateInfo {
 
 const TEMPLATE_DATA: TemplateInfo[] = [
   {
-    name: 'classic-spec',
+    name: 'project-analysis',
     displayName: {
-      [LANG.EN.code]: 'Classic Specification',
-      [LANG.JP.code]: '基本仕様書',
+      [LANG.EN.code]: 'Project Analysis',
+      [LANG.JP.code]: 'プロジェクト概要・分析',
     },
     description: {
-      [LANG.EN.code]: 'General-purpose specification documentation template',
-      [LANG.JP.code]: '汎用的な仕様書ドキュメントテンプレート',
+      [LANG.EN.code]: 'Template for project overview and analysis',
+      [LANG.JP.code]: 'プロジェクトの全体像を把握するための構造を提供します',
     },
-    features: ['search', 'plantuml'],
+    features: ['search', 'plantuml', 'mermaid'],
+  },
+  {
+    name: 'requirements',
+    displayName: {
+      [LANG.EN.code]: 'Requirements Specification',
+      [LANG.JP.code]: '要件定義',
+    },
+    description: {
+      [LANG.EN.code]: 'Template for requirements specification',
+      [LANG.JP.code]: '機能要件・非機能要件を体系的に整理できます',
+    },
+    features: ['search', 'mermaid'],
+  },
+  {
+    name: 'external-design',
+    displayName: {
+      [LANG.EN.code]: 'External Design',
+      [LANG.JP.code]: '外部設計',
+    },
+    description: {
+      [LANG.EN.code]: 'Template for external design specification',
+      [LANG.JP.code]: 'システム外部とのインターフェース設計に特化しています',
+    },
+    features: ['search', 'plantuml', 'mermaid', 'redoc'],
+  },
+  {
+    name: 'internal-design',
+    displayName: {
+      [LANG.EN.code]: 'Internal Design',
+      [LANG.JP.code]: '内部設計',
+    },
+    description: {
+      [LANG.EN.code]: 'Template for internal design specification',
+      [LANG.JP.code]: 'システム内部の詳細設計とアルゴリズムに特化しています',
+    },
+    features: ['search', 'plantuml', 'mermaid'],
   },
   {
     name: 'api-spec',
     displayName: {
-      [LANG.EN.code]: 'API Specification',
-      [LANG.JP.code]: 'API仕様書',
+      [LANG.EN.code]: 'API (Redocusaurus)',
+      [LANG.JP.code]: 'API (Redocusaurus使用)',
     },
     description: {
-      [LANG.EN.code]: 'Template for API specification and documentation',
-      [LANG.JP.code]: 'API仕様書・ドキュメント用テンプレート',
+      [LANG.EN.code]: 'Template for API specification with Redocusaurus',
+      [LANG.JP.code]: 'RESTful APIの詳細な仕様を記述できます',
     },
-    features: ['search', 'plantuml', 'redoc'],
-  },
-  {
-    name: 'technical-spec',
-    displayName: {
-      [LANG.EN.code]: 'Technical Specification',
-      [LANG.JP.code]: '技術仕様書',
-    },
-    description: {
-      [LANG.EN.code]: 'Template for technical specification and architecture',
-      [LANG.JP.code]: '技術仕様書・アーキテクチャ用テンプレート',
-    },
-    features: ['search', 'plantuml'],
-  },
-  {
-    name: 'enterprise-spec',
-    displayName: {
-      [LANG.EN.code]: 'Enterprise Specification',
-      [LANG.JP.code]: '企業向け仕様書',
-    },
-    description: {
-      [LANG.EN.code]: 'Template for enterprise specification and documentation',
-      [LANG.JP.code]: '企業向け仕様書・ドキュメント用テンプレート',
-    },
-    features: ['search', 'plantuml', 'redoc', 'i18n'],
+    features: ['search', 'redoc', 'mermaid'],
   },
 ];
 

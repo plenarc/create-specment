@@ -5,7 +5,7 @@ export interface CreateSpecmentOptions {
 }
 
 export interface TemplateType {
-  name: 'classic-spec' | 'api-spec' | 'technical-spec' | 'enterprise-spec';
+  name: 'project-analysis' | 'requirements' | 'external-design' | 'internal-design' | 'api-spec';
   displayName: string;
   description: string;
   features: string[];
@@ -24,26 +24,4 @@ export interface UserSelections {
   projectName: string;
   templates: TemplateType[];
   features: FeatureSelection[];
-}
-
-export interface TemplateConfig {
-  name: string;
-  displayName: string;
-  description: string;
-  docusaurusConfig: any;
-  defaultFeatures: string[];
-  directoryStructure: DirectoryStructure;
-  sampleContent: ContentFile[];
-}
-
-export interface DirectoryStructure {
-  docs: string[];
-  static: string[];
-  src?: string[];
-}
-
-export interface ContentFile {
-  path: string;
-  content: string;
-  template: boolean;
 }

@@ -1,6 +1,6 @@
-import { mkdir, writeFile } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
-import { existsSync } from 'node:fs';
+import { mkdir, writeFile } from 'fs/promises';
+import { join, resolve } from 'path';
+import { existsSync } from 'fs';
 import { spinner, note } from '@clack/prompts';
 import type { UserSelections, CreateSpecmentOptions } from '../types/index.js';
 import { generatePackageJson } from '../generators/package-json.js';
@@ -81,9 +81,9 @@ export class ProjectGenerator {
     const packageJson = generatePackageJson(this.selections);
     await writeFile(join(this.projectPath, 'package.json'), JSON.stringify(packageJson, null, 2));
 
-    // Generate docusaurus.config.js
+    // Generate docusaurus.config.ts
     const docusaurusConfig = generateDocusaurusConfig(this.selections);
-    await writeFile(join(this.projectPath, 'docusaurus.config.js'), docusaurusConfig);
+    await writeFile(join(this.projectPath, 'docusaurus.config.ts'), docusaurusConfig);
   }
 
   private async copyTemplateContent(): Promise<void> {

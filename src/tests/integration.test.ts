@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdirSync, rmSync, existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { mkdirSync, rmSync, existsSync, readFileSync } from 'fs';
+import { join } from 'path';
 import { InteractiveSetup } from '../core/interactive-setup.js';
 import { ProjectGenerator } from '../core/project-generator.js';
 import type { CreateSpecmentOptions, UserSelections } from '../types/index.js';
@@ -31,12 +31,12 @@ describe('End-to-End Integration Tests', () => {
   });
 
   describe('Template Generation Tests', () => {
-    it('should generate complete project for classic-spec template', async () => {
-      const projectName = 'test-classic-spec';
+    it('should generate complete project for project-analysis template', async () => {
+      const projectName = 'test-project-analysis';
       const _projectPath = join(projectsDir, projectName);
 
       const _options: CreateSpecmentOptions = {
-        template: 'classic-spec',
+        template: 'project-analysis',
         skipInstall: true,
         verbose: false,
       };
@@ -44,17 +44,17 @@ describe('End-to-End Integration Tests', () => {
       try {
         // プロジェクト生成のテスト（実際の生成は行わず、設定の検証のみ）
         const templates = getAvailableTemplates();
-        const template = templates.find((t) => t.name === 'classic-spec');
+        const template = templates.find((t) => t.name === 'project-analysis');
 
         expect(template).toBeDefined();
-        expect(template?.name).toBe('classic-spec');
+        expect(template?.name).toBe('project-analysis');
         expect(template?.description).toBeDefined();
 
         // テンプレートの基本構造を確認
         expect(template?.features).toBeDefined();
         expect(Array.isArray(template?.features)).toBe(true);
       } catch (error) {
-        console.error('Template classic-spec generation failed:', error);
+        console.error('Template project-analysis generation failed:', error);
         throw error;
       }
     });
@@ -102,19 +102,19 @@ describe('End-to-End Integration Tests', () => {
   describe('Configuration Validation Tests', () => {
     it('should validate CreateSpecmentOptions interface', () => {
       const validOptions: CreateSpecmentOptions = {
-        template: 'classic-spec',
+        template: 'project-analysis',
         skipInstall: true,
         verbose: false,
       };
 
-      expect(validOptions.template).toBe('classic-spec');
+      expect(validOptions.template).toBe('project-analysis');
       expect(validOptions.skipInstall).toBe(true);
       expect(validOptions.verbose).toBe(false);
     });
 
     it('should validate InteractiveSetup instantiation', () => {
       const options: CreateSpecmentOptions = {
-        template: 'classic-spec',
+        template: 'project-analysis',
         skipInstall: true,
         verbose: false,
       };
@@ -129,8 +129,8 @@ describe('End-to-End Integration Tests', () => {
         projectName: 'test-project',
         templates: [
           {
-            name: 'classic-spec' as const,
-            displayName: 'Classic Specification',
+            name: 'project-analysis' as const,
+            displayName: 'Project Analysis',
             description: 'Test template',
             features: ['search'],
           },
@@ -139,7 +139,7 @@ describe('End-to-End Integration Tests', () => {
       };
 
       const options: CreateSpecmentOptions = {
-        template: 'classic-spec',
+        template: 'project-analysis',
         skipInstall: true,
         verbose: false,
       };
@@ -184,9 +184,9 @@ describe('End-to-End Integration Tests', () => {
       expect(nodeVersion.startsWith('v')).toBe(true);
 
       // 必要なモジュールが利用可能かチェック
-      expect(() => require('node:fs')).not.toThrow();
-      expect(() => require('node:path')).not.toThrow();
-      expect(() => require('node:child_process')).not.toThrow();
+      expect(() => require('fs')).not.toThrow();
+      expect(() => require('path')).not.toThrow();
+      expect(() => require('child_process')).not.toThrow();
     });
 
     it('should validate package.json structure', () => {
