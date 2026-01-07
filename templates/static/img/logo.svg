@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景円 -->
+  <circle cx="100" cy="100" r="90" fill="#2e8555" stroke="#1e5e3f" stroke-width="4"/>
+
+  <!-- 文書アイコン -->
+  <rect x="60" y="50" width="80" height="100" rx="8" fill="white" stroke="#2e8555" stroke-width="2"/>
+
+  <!-- 文書の線 -->
+  <line x1="70" y1="70" x2="130" y2="70" stroke="#2e8555" stroke-width="2"/>
+  <line x1="70" y1="85" x2="130" y2="85" stroke="#2e8555" stroke-width="2"/>
+  <line x1="70" y1="100" x2="130" y2="100" stroke="#2e8555" stroke-width="2"/>
+  <line x1="70" y1="115" x2="110" y2="115" stroke="#2e8555" stroke-width="2"/>
+
+  <!-- ペンアイコン -->
+  <path d="M120 120 L135 105 L140 110 L125 125 Z" fill="#ff6b35" stroke="#d4541f" stroke-width="1"/>
+  <circle cx="137" cy="107" r="3" fill="#ff6b35"/>
+
+  <!-- 影 -->
+  <ellipse cx="100" cy="185" rx="70" ry="10" fill="rgba(0,0,0,0.2)"/>
+</svg>

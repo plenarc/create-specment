@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { TemplateProcessor, createTemplateProcessor } from './template-processor.js';
 
-describe('TemplateProcessor', () => {
+describe('テンプレートプロセッサー', () => {
   let processor: TemplateProcessor;
 
   beforeEach(() => {
@@ -12,52 +12,52 @@ describe('TemplateProcessor', () => {
     });
   });
 
-  describe('processTemplate', () => {
-    it('should replace simple variables', () => {
+  describe('テンプレート処理', () => {
+    it('単純な変数を置換できること', () => {
       const template = 'Hello {{projectName}}!';
       const result = processor.processTemplate(template);
       expect(result).toBe('Hello test-project!');
     });
 
-    it('should replace multiple variables', () => {
+    it('複数の変数を置換できること', () => {
       const template = 'Project: {{projectName}}, Author: {{author}}';
       const result = processor.processTemplate(template);
       expect(result).toBe('Project: test-project, Author: Test Author');
     });
 
-    it('should handle undefined variables gracefully', () => {
+    it('未定義変数を適切に処理できること', () => {
       const template = 'Hello {{unknownVariable}}!';
       const result = processor.processTemplate(template);
       expect(result).toBe('Hello {{unknownVariable}}!');
     });
 
-    it('should handle templates with no variables', () => {
+    it('変数のないテンプレートを処理できること', () => {
       const template = 'This is a plain text template';
       const result = processor.processTemplate(template);
       expect(result).toBe('This is a plain text template');
     });
 
-    it('should handle empty template', () => {
+    it('空のテンプレートを処理できること', () => {
       const template = '';
       const result = processor.processTemplate(template);
       expect(result).toBe('');
     });
 
-    it('should handle malformed variable syntax', () => {
+    it('不正な変数構文を処理できること', () => {
       const template = 'Hello {projectName} and {{author}';
       const result = processor.processTemplate(template);
       expect(result).toBe('Hello {projectName} and {{author}');
     });
   });
 
-  describe('setVariable and setVariables', () => {
-    it('should set single variable', () => {
+  describe('変数設定', () => {
+    it('単一変数を設定できること', () => {
       processor.setVariable('customVar', 'custom value');
       const result = processor.processTemplate('{{customVar}}');
       expect(result).toBe('custom value');
     });
 
-    it('should set multiple variables', () => {
+    it('複数変数を設定できること', () => {
       processor.setVariables({
         var1: 'value1',
         var2: 'value2',
@@ -66,15 +66,15 @@ describe('TemplateProcessor', () => {
       expect(result).toBe('value1 and value2');
     });
 
-    it('should override existing variables', () => {
+    it('既存変数を上書きできること', () => {
       processor.setVariable('projectName', 'new-project-name');
       const result = processor.processTemplate('{{projectName}}');
       expect(result).toBe('new-project-name');
     });
   });
 
-  describe('generateDerivedVariables', () => {
-    it('should generate derived variables from project name', () => {
+  describe('派生変数生成', () => {
+    it('プロジェクト名から派生変数を生成できること', () => {
       const processor = new TemplateProcessor({ projectName: 'my-awesome-project' });
       processor.generateDerivedVariables();
 
@@ -85,7 +85,7 @@ describe('TemplateProcessor', () => {
       expect(variables.projectNameKebab).toBe('my-awesome-project');
     });
 
-    it('should handle single word project names', () => {
+    it('単語のプロジェクト名を処理できること', () => {
       const processor = new TemplateProcessor({ projectName: 'project' });
       processor.generateDerivedVariables();
 
@@ -97,8 +97,8 @@ describe('TemplateProcessor', () => {
     });
   });
 
-  describe('default variables', () => {
-    it('should set default date and year', () => {
+  describe('デフォルト変数', () => {
+    it('デフォルトの日付と年を設定できること', () => {
       const processor = new TemplateProcessor({});
       const variables = processor.getVariables();
 
@@ -106,7 +106,7 @@ describe('TemplateProcessor', () => {
       expect(variables.year).toMatch(/^\d{4}$/); // YYYY format
     });
 
-    it('should set default project name', () => {
+    it('デフォルトのプロジェクト名を設定できること', () => {
       const processor = new TemplateProcessor({});
       const variables = processor.getVariables();
 
@@ -115,8 +115,8 @@ describe('TemplateProcessor', () => {
   });
 });
 
-describe('createTemplateProcessor', () => {
-  it('should create processor with project name', async () => {
+describe('テンプレートプロセッサー作成', () => {
+  it('プロジェクト名でプロセッサーを作成できること', async () => {
     const processor = await createTemplateProcessor('test-project');
     const variables = processor.getVariables();
 
@@ -124,7 +124,7 @@ describe('createTemplateProcessor', () => {
     expect(variables.description).toBe('Documentation for test-project');
   });
 
-  it('should include derived variables', async () => {
+  it('派生変数を含むこと', async () => {
     const processor = await createTemplateProcessor('my-test-project');
     const variables = processor.getVariables();
 
@@ -133,7 +133,7 @@ describe('createTemplateProcessor', () => {
     expect(variables.projectNameConstant).toBe('MY_TEST_PROJECT');
   });
 
-  it('should accept additional variables', async () => {
+  it('追加変数を受け入れること', async () => {
     const processor = await createTemplateProcessor('test-project', {
       customVar: 'custom value',
     });

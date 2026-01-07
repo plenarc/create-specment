@@ -4,7 +4,7 @@ tags:
   - batch
   - product
 ---
-import { TBD } from '@site/src/components/TBD';
+import TBD from '@site/src/components/TBD';
 
 # import-products - 商品取込
 ## 概要 {#overview}
@@ -31,12 +31,8 @@ import { TBD } from '@site/src/components/TBD';
 1. 各フェーズごとのエラー処理、メッセージ内容は明確にする
 :::
 
-```plantuml
+```pumld
 @startuml
-!define uml https://raw.githubusercontent.com/flatring/plantuml-stencils/main
-!include uml/colorset/ocean-blue.iuml
-!include uml/colorset/_skinparams.iuml
-
 participant User
 User -> A: DoWork
 activate A #FFBBBB

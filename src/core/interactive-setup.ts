@@ -88,12 +88,12 @@ export class InteractiveSetup {
     }
 
     const isEn = this.selectedLanguage === LANG.EN.code;
-    const projectName = await text({
-      message: isEn ? 'Project name:' : 'プロジェクト名を入力してください:',
+    const folderName = await text({
+      message: isEn ? 'Enter folder name (project name):' : '作成先のフォルダー名(プロジェクト名)を入力してください:',
       defaultValue: initialName || 'docs',
       validate: (value: string) => {
         if (!value.trim()) {
-          return isEn ? 'Project name is required' : 'プロジェクト名は必須です';
+          return isEn ? 'Folder name is required' : 'フォルダー名';
         }
         if (!/^[a-zA-Z0-9-_]+$/.test(value)) {
           return isEn
@@ -103,11 +103,11 @@ export class InteractiveSetup {
       },
     });
 
-    if (isCancel(projectName)) {
+    if (isCancel(folderName)) {
       throw new UserCancelledError();
     }
 
-    return projectName;
+    return folderName;
   }
 
   private async getTemplateSelection(): Promise<TemplateType[]> {
@@ -179,14 +179,24 @@ export class InteractiveSetup {
       }
     }
 
+    // APIテンプレートが選択されている場合の特別処理
+    const hasApiTemplate = templates.some(template => template.name === 'api-spec');
+    const autoEnabledFeatures = new Set<string>();
+
+    if (hasApiTemplate) {
+      // APIテンプレートが選択されている場合、Redocを自動的に有効にする
+      autoEnabledFeatures.add('redoc');
+    }
+
+    // 自動有効化される機能は選択肢から除外
     const supportedFeatures = availableFeatures.filter((feature) =>
-      allSupportedFeatures.has(feature.name),
+      allSupportedFeatures.has(feature.name) && !autoEnabledFeatures.has(feature.name)
     );
 
     if (supportedFeatures.length === 0) {
       return availableFeatures.map((feature) => ({
         ...feature,
-        enabled: false,
+        enabled: autoEnabledFeatures.has(feature.name),
       }));
     }
 
@@ -209,7 +219,7 @@ export class InteractiveSetup {
 
     return availableFeatures.map((feature) => ({
       ...feature,
-      enabled: selectedFeatures.includes(feature.name),
+      enabled: selectedFeatures.includes(feature.name) || autoEnabledFeatures.has(feature.name),
     }));
   }
 }
