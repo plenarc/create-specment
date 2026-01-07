@@ -1,6 +1,6 @@
-import { spawn } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { spawn } from 'child_process';
+import { existsSync } from 'fs';
+import { join } from 'path';
 
 export interface InstallOptions {
   verbose?: boolean;

@@ -16,6 +16,21 @@ export function getAvailableFeatures(): FeatureSelection[] {
       },
     },
     {
+      name: 'mermaid',
+      displayName: 'Mermaid',
+      description: 'Mermaid図表統合 (Flowcharts, sequence diagrams, and more)',
+      enabled: false,
+      plugin: '@docusaurus/theme-mermaid',
+      config: {
+        mermaid: {
+          theme: 'default',
+          options: {
+            fontFamily: 'inherit',
+          },
+        },
+      },
+    },
+    {
       name: 'redoc',
       displayName: 'Redoc(Redocusaurus)',
       description: 'OpenAPI仕様書のRedoc表示 (OpenAPI documentation with Redoc)',
@@ -29,18 +44,6 @@ export function getAvailableFeatures(): FeatureSelection[] {
               route: '/api/',
             },
           ],
-        },
-      },
-    },
-    {
-      name: 'i18n',
-      displayName: 'Internationalization (i18n)',
-      description: '多言語対応 (Multi-language support)',
-      enabled: false,
-      config: {
-        i18n: {
-          defaultLocale: LANG.EN.code,
-          locales: [LANG.EN.code, 'ja'],
         },
       },
     },

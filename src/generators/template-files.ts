@@ -1,10 +1,9 @@
-import { mkdir, writeFile, access, cp } from 'node:fs/promises';
-import { join, resolve, dirname } from 'node:path';
-import { existsSync, constants } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { mkdir, writeFile, access, cp } from 'fs/promises';
+import { join, resolve, dirname } from 'path';
+import { existsSync, constants } from 'fs';
+import { fileURLToPath } from 'url';
 import type { UserSelections } from '../types/index.js';
 import { createTemplateProcessor, type TemplateProcessor } from '../utils/template-processor.js';
-import { getTemplateDefinition } from '../templates/template-definitions.js';
 
 // プロジェクト内のテンプレートディレクトリのパス
 const __filename = fileURLToPath(import.meta.url);
@@ -27,29 +26,23 @@ export async function copyTemplateFiles(
     templateDisplayName: primaryTemplate.displayName,
   });
 
-  // 全テンプレートのディレクトリ構造を統合
-  const combinedStructure = combineTemplateStructures(templates);
-
   // ディレクトリ構造を作成
-  await createDirectoryStructure(projectPath, combinedStructure);
+  await createDirectoryStructure(projectPath);
 
-  // 各テンプレートのファイルを生成
-  for (const template of templates) {
-    const templateDef = getTemplateDefinition(template.name);
-    if (!templateDef) {
-      console.warn(`Template definition not found for: ${template.name}`);
-      continue;
-    }
-
-    // サンプルコンテンツを生成
-    await generateSampleContent(projectPath, templateDef.sampleContent, processor);
+  // API機能が有効な場合はOpenAPIファイルとディレクトリを生成
+  const hasApiFeature = selections.features.some(f => f.enabled && f.name === 'redoc');
+  if (hasApiFeature) {
+    await generateOpenAPIFiles(projectPath);
   }
 
-  // 基本ファイルを生成（最初のテンプレートベース）
-  await generateSidebarsConfig(projectPath, primaryTemplate.name, processor);
+  // 基本ファイルを生成（選択されたテンプレート配列を渡す）
+  await generateSidebarsConfig(projectPath, templates, processor);
 
   // 参考リポジトリから基本ファイルをコピー
   await copyFromReferenceRepo(projectPath, ['introduction']);
+
+  // ルートページファイルをコピー
+  await copyRootPageFiles(projectPath);
 
   // intro.mdもコピー
   const introSourcePath = join(TEMPLATE_DOCS_PATH, 'intro.md');
@@ -71,41 +64,14 @@ export async function copyTemplateFiles(
 
   await generateCustomCSS(projectPath);
   await generateStaticFiles(projectPath, processor);
-}
+  await copyStaticAssets(projectPath);
+  await generateTBDComponent(projectPath);
 
-function combineTemplateStructures(templates: any[]): any {
-  const combined = {
-    docs: new Set<string>(),
-    static: new Set<string>(),
-    src: new Set<string>(),
-  };
-
-  for (const template of templates) {
-    const templateDef = getTemplateDefinition(template.name);
-    if (templateDef?.directoryStructure) {
-      if (templateDef.directoryStructure.docs) {
-        for (const dir of templateDef.directoryStructure.docs) {
-          combined.docs.add(dir);
-        }
-      }
-      if (templateDef.directoryStructure.static) {
-        for (const dir of templateDef.directoryStructure.static) {
-          combined.static.add(dir);
-        }
-      }
-      if (templateDef.directoryStructure.src) {
-        for (const dir of templateDef.directoryStructure.src) {
-          combined.src.add(dir);
-        }
-      }
-    }
+  // 要件定義テンプレートが選択されている場合はPriorityMatrixコンポーネントをコピー
+  const hasRequirementsTemplate = templates.some(template => template.name === 'requirements');
+  if (hasRequirementsTemplate) {
+    await generatePriorityMatrixComponent(projectPath);
   }
-
-  return {
-    docs: Array.from(combined.docs),
-    static: Array.from(combined.static),
-    src: Array.from(combined.src),
-  };
 }
 
 async function validateProjectPath(projectPath: string): Promise<void> {
@@ -124,7 +90,7 @@ async function validateProjectPath(projectPath: string): Promise<void> {
   }
 }
 
-async function createDirectoryStructure(projectPath: string, structure: any): Promise<void> {
+async function createDirectoryStructure(projectPath: string): Promise<void> {
   // 基本ディレクトリを作成
   const baseDirectories = ['docs', 'src/css', 'src/components', 'static/img'];
 
@@ -132,150 +98,50 @@ async function createDirectoryStructure(projectPath: string, structure: any): Pr
     const dirPath = join(projectPath, dir);
     await mkdir(dirPath, { recursive: true });
   }
-
-  // テンプレート固有のディレクトリを作成
-  if (structure.docs) {
-    for (const docDir of structure.docs) {
-      const dirPath = join(projectPath, 'docs', docDir);
-      await mkdir(dirPath, { recursive: true });
-    }
-  }
-
-  if (structure.static) {
-    for (const staticDir of structure.static) {
-      const dirPath = join(projectPath, 'static', staticDir);
-      await mkdir(dirPath, { recursive: true });
-    }
-  }
-
-  if (structure.src) {
-    for (const srcDir of structure.src) {
-      const dirPath = join(projectPath, 'src', srcDir);
-      await mkdir(dirPath, { recursive: true });
-    }
-  }
 }
 
-async function _generateTemplateFiles(
-  projectPath: string,
-  templateName: string,
-  processor: TemplateProcessor,
-): Promise<void> {
-  const templateDir = join(process.cwd(), 'templates', templateName);
-
-  try {
-    // package.json.templateを処理
-    const packageJsonTemplate = join(templateDir, 'package.json.template');
-    const processedPackageJson = await processor.processTemplateFile(packageJsonTemplate);
-    await writeFile(join(projectPath, 'package.json'), processedPackageJson);
-
-    // docusaurus.config.js.templateを処理
-    const configTemplate = join(templateDir, 'docusaurus.config.js.template');
-    const processedConfig = await processor.processTemplateFile(configTemplate);
-    await writeFile(join(projectPath, 'docusaurus.config.js'), processedConfig);
-  } catch (error) {
-    console.error(`Error generating template files for ${templateName}:`, error);
-    throw error;
-  }
-}
-
-async function generateSampleContent(
-  projectPath: string,
-  sampleContent: any[],
-  processor: TemplateProcessor,
-): Promise<void> {
-  for (const content of sampleContent) {
-    const filePath = join(projectPath, content.path);
-
-    // ディレクトリが存在しない場合は作成
-    const dirPath = resolve(filePath, '..');
-    await mkdir(dirPath, { recursive: true });
-
-    // 既存のディレクトリと同名のファイルを作成しようとしている場合はエラー
-    if (existsSync(filePath)) {
-      const { stat } = await import('node:fs/promises');
-      const stats = await stat(filePath);
-      if (stats.isDirectory()) {
-        throw new Error(
-          `Cannot create file '${filePath}': A directory with the same name already exists`,
-        );
-      }
-    }
-
-    if (content.template) {
-      // テンプレート変数を置換
-      const processedContent = processor.processTemplate(content.content);
-      await writeFile(filePath, processedContent, 'utf8');
-    } else {
-      // そのまま書き込み
-      await writeFile(filePath, content.content, 'utf8');
-    }
-  }
-}
 
 async function generateSidebarsConfig(
   projectPath: string,
-  templateName: string,
+  selectedTemplates: any[],
   processor: TemplateProcessor,
 ): Promise<void> {
-  const sidebarConfigs = {
-    'classic-spec': `import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
+  const sidebarSections: string[] = [];
+
+  // 常に含まれるセクション
+  sidebarSections.push('introduction: [{ type: \'autogenerated\', dirName: \'introduction\' }]');
+
+  // 選択されたテンプレートに応じてセクションを追加
+  for (const template of selectedTemplates) {
+    switch (template.name) {
+      case 'project-analysis':
+        sidebarSections.push('overview: [{ type: \'autogenerated\', dirName: \'overview\' }]');
+        break;
+      case 'requirements':
+        sidebarSections.push('requirements: [{ type: \'autogenerated\', dirName: \'requirements\' }]');
+        break;
+      case 'external-design':
+        sidebarSections.push('external: [{ type: \'autogenerated\', dirName: \'external\' }]');
+        break;
+      case 'internal-design':
+        sidebarSections.push('internal: [{ type: \'autogenerated\', dirName: \'internal\' }]');
+        break;
+      case 'api-spec':
+        // APIテンプレートの場合は特別なセクションは追加しない（Redocで表示）
+        break;
+    }
+  }
+
+  const sidebarContent = `import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 
 // https://docusaurus.io/docs/sidebar
 
 const sidebars: SidebarsConfig = {
-  introduction: [{ type: 'autogenerated', dirName: 'introduction' }],
+  ${sidebarSections.join(',\n  ')},
 };
 
-export default sidebars;`,
+export default sidebars;`;
 
-    'project-analysis': `import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
-
-// https://docusaurus.io/docs/sidebar
-
-const sidebars: SidebarsConfig = {
-  introduction: [{ type: 'autogenerated', dirName: 'introduction' }],
-  businessAnalysis: [{ type: 'autogenerated', dirName: '01-overview' }],
-};
-
-export default sidebars;`,
-
-    requirements: `import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
-
-// https://docusaurus.io/docs/sidebar
-
-const sidebars: SidebarsConfig = {
-  introduction: [{ type: 'autogenerated', dirName: 'introduction' }],
-  requirements: [{ type: 'autogenerated', dirName: '02-requirements' }],
-};
-
-export default sidebars;`,
-
-    'external-design': `import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
-
-// https://docusaurus.io/docs/sidebar
-
-const sidebars: SidebarsConfig = {
-  introduction: [{ type: 'autogenerated', dirName: 'introduction' }],
-  external: [{ type: 'autogenerated', dirName: '03-external' }],
-};
-
-export default sidebars;`,
-
-    'internal-design': `import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
-
-// https://docusaurus.io/docs/sidebar
-
-const sidebars: SidebarsConfig = {
-  introduction: [{ type: 'autogenerated', dirName: 'introduction' }],
-  internal: [{ type: 'autogenerated', dirName: '04-internal' }],
-};
-
-export default sidebars;`,
-  };
-
-  const sidebarContent =
-    sidebarConfigs[templateName as keyof typeof sidebarConfigs] || sidebarConfigs['classic-spec'];
   const processedContent = processor.processTemplate(sidebarContent);
   await writeFile(join(projectPath, 'sidebars.ts'), processedContent);
 }
@@ -385,6 +251,39 @@ yarn-error.log*
   await writeFile(join(projectPath, '.gitignore'), gitignoreContent, 'utf8');
 }
 
+// ルートページファイルをコピー
+async function copyRootPageFiles(projectPath: string): Promise<void> {
+  const srcPagesDir = join(projectPath, 'src', 'pages');
+
+  await mkdir(srcPagesDir, { recursive: true });
+
+  // index.tsxファイルをコピー（ユーザーが編集済み）
+  const indexSourcePath = join(TEMPLATE_DOCS_PATH, 'index.tsx');
+  const indexTargetPath = join(srcPagesDir, 'index.tsx');
+
+  if (existsSync(indexSourcePath)) {
+    try {
+      await cp(indexSourcePath, indexTargetPath);
+      console.log('Copied index.tsx to src/pages');
+    } catch (error) {
+      console.warn(`Failed to copy index.tsx: ${error}`);
+    }
+  }
+
+  // index.module.cssファイルをコピー（参考リポジトリからコピー済み）
+  const cssSourcePath = join(TEMPLATE_DOCS_PATH, 'index.module.css');
+  const cssTargetPath = join(srcPagesDir, 'index.module.css');
+
+  if (existsSync(cssSourcePath)) {
+    try {
+      await cp(cssSourcePath, cssTargetPath);
+      console.log('Copied index.module.css to src/pages');
+    } catch (error) {
+      console.warn(`Failed to copy index.module.css: ${error}`);
+    }
+  }
+}
+
 // プロジェクト内のテンプレートから基本ディレクトリをコピー
 async function copyFromReferenceRepo(projectPath: string, directories: string[]): Promise<void> {
   const docsPath = join(projectPath, 'docs');
@@ -408,31 +307,518 @@ async function copyFromReferenceRepo(projectPath: string, directories: string[])
 
 // テンプレートに対応するディレクトリをコピー
 async function copyTemplateDirectory(projectPath: string, templateName: string): Promise<void> {
-  const templateDirMap: Record<string, string> = {
-    'classic-spec': 'introduction',
-    'project-analysis': '01-overview',
-    'requirements': '02-requirements',
-    'external-design': '03-external',
-    'internal-design': '04-internal',
+  const templateDirMap: Record<string, { source: string; target: string }> = {
+    'classic-spec': { source: 'introduction', target: 'introduction' },
+    'project-analysis': { source: '01-overview', target: 'overview' },
+    'requirements': { source: '02-requirements', target: 'requirements' },
+    'external-design': { source: '03-external', target: 'external' },
+    'internal-design': { source: '04-internal', target: 'internal' },
+    'technical-spec': { source: '04-internal', target: 'internal' }, // 技術仕様書は内部設計と同じディレクトリを使用
   };
 
-  const dirName = templateDirMap[templateName];
-  if (!dirName) {
+  const dirMapping = templateDirMap[templateName];
+  if (!dirMapping) {
     console.warn(`No directory mapping found for template: ${templateName}`);
     return;
   }
 
-  const sourcePath = join(TEMPLATE_DOCS_PATH, dirName);
-  const targetPath = join(projectPath, 'docs', dirName);
+  const sourcePath = join(TEMPLATE_DOCS_PATH, dirMapping.source);
+  const targetPath = join(projectPath, 'docs', dirMapping.target);
 
   if (existsSync(sourcePath)) {
     try {
       await cp(sourcePath, targetPath, { recursive: true });
-      console.log(`Copied ${dirName} directory for template: ${templateName}`);
+      console.log(`Copied ${dirMapping.source} directory for template: ${templateName}`);
     } catch (error) {
-      console.warn(`Failed to copy ${dirName}: ${error}`);
+      console.warn(`Failed to copy ${dirMapping.source}: ${error}`);
     }
   } else {
     console.warn(`Template directory not found: ${sourcePath}`);
+  }
+}
+
+// OpenAPIファイルとディレクトリを生成
+async function generateOpenAPIFiles(projectPath: string): Promise<void> {
+  // openapiディレクトリを作成
+  const openapiDir = join(projectPath, 'openapi');
+  await mkdir(openapiDir, { recursive: true });
+
+  // 参考リポジトリのOpenAPIファイルをコピー
+  const referenceOpenAPIPath = '/home/ohbayashi/projects/specment/openapi/openapi-single.yaml';
+  const targetOpenAPIPath = join(openapiDir, 'openapi-single.yaml');
+
+  if (existsSync(referenceOpenAPIPath)) {
+    try {
+      await cp(referenceOpenAPIPath, targetOpenAPIPath);
+      console.log('Copied OpenAPI specification from reference repository');
+    } catch (error) {
+      console.warn(`Failed to copy OpenAPI file: ${error}`);
+      // フォールバック: サンプルOpenAPIファイルを生成
+      await generateSampleOpenAPIFile(targetOpenAPIPath);
+    }
+  } else {
+    // 参考ファイルが見つからない場合はサンプルを生成
+    await generateSampleOpenAPIFile(targetOpenAPIPath);
+  }
+}
+
+// サンプルOpenAPIファイルを生成
+async function generateSampleOpenAPIFile(filePath: string): Promise<void> {
+  const sampleOpenAPI = `openapi: 3.0.3
+servers:
+  - url: //api.example.com/v1
+    description: プロダクションサーバー
+  - url: //staging-api.example.com/v1
+    description: ステージングサーバー
+info:
+  description: |
+    これはサンプルAPIの仕様書です。
+
+    # はじめに
+    このAPIは **OpenAPI形式** でドキュメント化されており、RESTful APIの設計原則に従っています。
+
+    # 認証
+    このAPIはJWT（JSON Web Token）を使用したBearer認証を採用しています。
+
+    # レスポンス形式
+    すべてのAPIレスポンスはJSON形式で返されます。
+
+  version: 1.0.0
+  title: Sample API
+  contact:
+    name: APIサポート
+    email: support@example.com
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+tags:
+  - name: users
+    description: ユーザー管理
+  - name: auth
+    description: 認証・認可
+paths:
+  /users:
+    get:
+      tags:
+        - users
+      summary: ユーザー一覧を取得
+      description: システムに登録されているユーザーの一覧を取得します
+      parameters:
+        - name: limit
+          in: query
+          description: 取得する件数の上限
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          description: 取得開始位置
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: ユーザー一覧の取得に成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  total:
+                    type: integer
+                    description: 総件数
+                  limit:
+                    type: integer
+                    description: 取得件数の上限
+                  offset:
+                    type: integer
+                    description: 取得開始位置
+        '400':
+          description: リクエストパラメータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - BearerAuth: []
+    post:
+      tags:
+        - users
+      summary: 新しいユーザーを作成
+      description: 新しいユーザーをシステムに登録します
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: ユーザーの作成に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: リクエストボディが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: ユーザーが既に存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - BearerAuth: []
+
+  /users/{userId}:
+    get:
+      tags:
+        - users
+      summary: ユーザー詳細を取得
+      description: 指定されたIDのユーザー詳細情報を取得します
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ユーザーID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: ユーザー詳細の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: ユーザーが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - BearerAuth: []
+
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: ユーザーログイン
+      description: ユーザー認証を行い、JWTトークンを発行します
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: メールアドレス
+                  example: "user@example.com"
+                password:
+                  type: string
+                  description: パスワード
+                  example: "password123"
+      responses:
+        '200':
+          description: ログイン成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWTトークン
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - name
+        - email
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ユーザーID
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        name:
+          type: string
+          description: ユーザー名
+          minLength: 1
+          maxLength: 100
+          example: "田中太郎"
+        email:
+          type: string
+          format: email
+          description: メールアドレス
+          example: "tanaka@example.com"
+        age:
+          type: integer
+          description: 年齢
+          minimum: 0
+          maximum: 150
+          example: 30
+        createdAt:
+          type: string
+          format: date-time
+          description: 作成日時
+          example: "2023-01-01T00:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: 更新日時
+          example: "2023-01-01T00:00:00Z"
+
+    CreateUserRequest:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          description: ユーザー名
+          minLength: 1
+          maxLength: 100
+          example: "田中太郎"
+        email:
+          type: string
+          format: email
+          description: メールアドレス
+          example: "tanaka@example.com"
+        age:
+          type: integer
+          description: 年齢
+          minimum: 0
+          maximum: 150
+          example: 30
+        password:
+          type: string
+          description: パスワード
+          minLength: 8
+          example: "password123"
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: エラーコード
+          example: "INVALID_REQUEST"
+        message:
+          type: string
+          description: エラーメッセージ
+          example: "リクエストパラメータが不正です"
+        details:
+          type: object
+          description: エラーの詳細情報
+          additionalProperties: true
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []
+`;
+
+  await writeFile(filePath, sampleOpenAPI, 'utf8');
+  console.log('Generated sample OpenAPI specification');
+}
+// 静的アセット（画像など）をコピー
+async function copyStaticAssets(projectPath: string): Promise<void> {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  const TEMPLATE_STATIC_PATH = resolve(__dirname, '../../templates/static');
+
+  const staticTargetPath = join(projectPath, 'static');
+
+  if (existsSync(TEMPLATE_STATIC_PATH)) {
+    try {
+      await cp(TEMPLATE_STATIC_PATH, staticTargetPath, { recursive: true });
+      console.log('Copied static assets from templates/static');
+    } catch (error) {
+      console.warn(`Failed to copy static assets: ${error}`);
+    }
+  } else {
+    console.warn(`Template static directory not found: ${TEMPLATE_STATIC_PATH}`);
+
+    // フォールバック: 個別にファイルをコピー
+    const staticImgDir = join(projectPath, 'static', 'img');
+    await mkdir(staticImgDir, { recursive: true });
+
+    // logo.svgファイルをコピー
+    const logoSourcePath = join(TEMPLATE_DOCS_PATH, 'logo.svg');
+    const logoTargetPath = join(staticImgDir, 'logo.svg');
+
+    if (existsSync(logoSourcePath)) {
+      try {
+        await cp(logoSourcePath, logoTargetPath);
+        console.log('Copied logo.svg to static/img');
+      } catch (error) {
+        console.warn(`Failed to copy logo.svg: ${error}`);
+      }
+    }
+  }
+}
+
+// PriorityMatrixコンポーネントをコピー（要件定義テンプレート用）
+async function generatePriorityMatrixComponent(projectPath: string): Promise<void> {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  const TEMPLATE_SRC_PATH = resolve(__dirname, '../../templates/src');
+
+  // PriorityMatrixコンポーネントをコピー
+  const priorityMatrixSourcePath = join(TEMPLATE_SRC_PATH, 'components', 'PriorityMatrix');
+  const priorityMatrixTargetPath = join(projectPath, 'src', 'components', 'PriorityMatrix');
+
+  if (existsSync(priorityMatrixSourcePath)) {
+    try {
+      await cp(priorityMatrixSourcePath, priorityMatrixTargetPath, { recursive: true });
+      console.log('Generated PriorityMatrix component');
+    } catch (error) {
+      console.warn(`Failed to copy PriorityMatrix component: ${error}`);
+    }
+  } else {
+    console.warn(`PriorityMatrix component template not found: ${priorityMatrixSourcePath}`);
+  }
+
+  // 型定義ファイルをコピー（存在する場合）
+  const typesSourcePath = join(TEMPLATE_SRC_PATH, 'types');
+  const typesTargetPath = join(projectPath, 'src', 'types');
+
+  if (existsSync(typesSourcePath)) {
+    try {
+      await cp(typesSourcePath, typesTargetPath, { recursive: true });
+      console.log('Generated types directory');
+    } catch (error) {
+      console.warn(`Failed to copy types directory: ${error}`);
+    }
+  } else {
+    // 型定義ファイルが存在しない場合は作成
+    await mkdir(typesTargetPath, { recursive: true });
+
+    const requirementsTypeContent = `/**
+ * Requirements related type definitions
+ */
+
+/**
+ * Priority scale from 1 to 9
+ * 1-3: Low priority
+ * 4-6: Medium priority
+ * 7-9: High priority
+ */
+export type PriorityScale = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+
+/**
+ * Requirement priority matrix
+ */
+export interface RequirementPriority {
+  importance: PriorityScale;
+  urgency: PriorityScale;
+}
+`;
+
+    await writeFile(join(typesTargetPath, 'requirements.ts'), requirementsTypeContent, 'utf8');
+    console.log('Generated requirements.ts type definitions');
+  }
+}
+
+// TBDコンポーネントとその依存関係をコピー
+async function generateTBDComponent(projectPath: string): Promise<void> {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  const TEMPLATE_SRC_PATH = resolve(__dirname, '../../templates/src');
+
+  // TBDコンポーネントをコピー
+  const tbdSourcePath = join(TEMPLATE_SRC_PATH, 'components', 'TBD');
+  const tbdTargetPath = join(projectPath, 'src', 'components', 'TBD');
+
+  if (existsSync(tbdSourcePath)) {
+    try {
+      await cp(tbdSourcePath, tbdTargetPath, { recursive: true });
+      console.log('Generated TBD component');
+    } catch (error) {
+      console.warn(`Failed to copy TBD component: ${error}`);
+    }
+  } else {
+    console.warn(`TBD component template not found: ${tbdSourcePath}`);
+  }
+
+  // Highlightコンポーネントもコピー（TBDが依存しているため）
+  const highlightSourcePath = join(TEMPLATE_SRC_PATH, 'components', 'Highlight');
+  const highlightTargetPath = join(projectPath, 'src', 'components', 'Highlight');
+
+  if (existsSync(highlightSourcePath)) {
+    try {
+      await cp(highlightSourcePath, highlightTargetPath, { recursive: true });
+      console.log('Generated Highlight component');
+    } catch (error) {
+      console.warn(`Failed to copy Highlight component: ${error}`);
+    }
+  } else {
+    console.warn(`Highlight component template not found: ${highlightSourcePath}`);
   }
 }

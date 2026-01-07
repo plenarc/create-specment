@@ -5,6 +5,9 @@ import { createSpecmentProject } from './commands/create.js';
 import { version } from './utils/version.js';
 import { UserCancelledError, CLIError } from './utils/errors.js';
 
+// Node.js globals
+declare const process: NodeJS.Process;
+
 const program = new Command();
 
 program
@@ -22,7 +25,7 @@ program
   )
   .option('--skip-install', 'Skip package installation')
   .option('--verbose', 'Enable verbose logging')
-  .action(async (projectName: string | undefined, options) => {
+  .action(async (projectName: string | undefined, options: any) => {
     try {
       await createSpecmentProject(projectName, options);
     } catch (error) {
