@@ -35,7 +35,7 @@ vi.mock('../features/index.js', () => ({
   ]),
 }));
 
-describe('InteractiveSetup with Validation', () => {
+describe('検証付きインタラクティブセットアップ', () => {
   let setup: InteractiveSetup;
   let mockOptions: CreateSpecmentOptions;
 
@@ -57,8 +57,8 @@ describe('InteractiveSetup with Validation', () => {
     multiselect.mockResolvedValue(['classic-spec']);
   });
 
-  describe('Non-interactive mode validation', () => {
-    it('should validate project name in non-interactive mode', async () => {
+  describe('非インタラクティブモード検証', () => {
+    it('非インタラクティブモードでプロジェクト名を検証できること', async () => {
       const options: CreateSpecmentOptions = {
         template: 'classic-spec',
         skipInstall: false,
@@ -77,7 +77,7 @@ describe('InteractiveSetup with Validation', () => {
       }
     });
 
-    it('should reject invalid project name in non-interactive mode', async () => {
+    it('非インタラクティブモードで無効なプロジェクト名を拒否できること', async () => {
       const options: CreateSpecmentOptions = {
         template: 'classic-spec',
         skipInstall: false,
@@ -90,7 +90,7 @@ describe('InteractiveSetup with Validation', () => {
       await expect(setupWithTemplate.run('invalid@project')).rejects.toThrow();
     });
 
-    it('should reject invalid template in non-interactive mode', async () => {
+    it('非インタラクティブモードで無効なテンプレートを拒否できること', async () => {
       const options: CreateSpecmentOptions = {
         template: 'invalid-template',
         skipInstall: false,
@@ -103,8 +103,8 @@ describe('InteractiveSetup with Validation', () => {
     });
   });
 
-  describe('Validation integration', () => {
-    it('should use validation functions for project name input', () => {
+  describe('検証統合', () => {
+    it('プロジェクト名入力に検証関数を使用できること', () => {
       // バリデーション関数が統合されていることを確認
       expect(setup).toBeDefined();
       expect(typeof setup.run).toBe('function');
