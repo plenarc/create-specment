@@ -7,7 +7,31 @@
 
 Demo: https://plenarc.github.io/specment/
 
-Interactive project generator specialized for creating Docusaurus-based specification documentation
+1. 'specification' + 'document' => Specment
+1. A site generation tool specializing in creating specification documents based on Docusaurus.
+
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img src=".github/images/screenshots/overview.png" alt="Project Overview" width="250" />
+        <br>
+        <em>Example: Project Overview</em>
+      </td>
+      <td align="center">
+        <img src=".github/images/screenshots/as-is.png" alt="As-Is Current State Analysis" width="250" />
+        <br>
+        <em>Example: As-Is Current State Analysis</em>
+      </td>
+      <td align="center">
+        <img src=".github/images/screenshots/redoc.png" alt="As-Is Current State Analysis" width="250" />
+        <br>
+        <em>Example: Redoc (OpenAPI)</em>
+      </td>
+    </tr>
+  </table>
+</div>
 
 ## Overview
 
