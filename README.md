@@ -1,15 +1,15 @@
 # create-specment
 
-[![NPM Package](.github/images/icons/npm-badge.svg)](https://www.npmjs.com/package/@plenarc/create-specment)
-[![MIT License](.github/images/icons/license-badge.svg)](LICENSE)
+[![npm version][npm-image]][npm-url]
+[![npm downlads][npm-downloads-image]][npm-url]
+[![License][license-image]][license-url]
 
 [English](README.md) | [日本語](README-jp.md)
 
 Demo: https://plenarc.github.io/specment/
 
 1. 'specification' + 'document' => Specment
-1. A site generation tool specializing in creating specification documents based on Docusaurus.
-
+1. A site generation tool specializing in creating specification documents based on Docusaurus
 
 <div align="center">
   <table>
@@ -40,7 +40,7 @@ Demo: https://plenarc.github.io/specment/
 ## Features
 
 1. 🚀 **Interactive Setup**: Generate projects by simply answering questions
-1. 📋 **4 Specialized Templates**: Choose optimal templates based on your use case
+1. 📋 **5 Specialized Templates**: Choose optimal templates based on your use case
 1. 🔧 **Feature Selection**: Select PlantUML, Redoc, search, multilingual support, and more
 1. 📝 **Variable Substitution**: Automatically replace project names and author information
 1. 🎨 **Docusaurus Compatible**: Fully compatible with the existing Docusaurus ecosystem
@@ -61,15 +61,22 @@ The following software must be installed:
     ```
 
 1. **mise (development environment management tool)**
+    1. Linux/macOS/WSL
+        ```bash
+        curl https://mise.run | sh
 
-    ```bash
-    # Install mise (Linux/macOS/WSL)
-    curl https://mise.run | sh
-
-    # Update shell configuration
-    echo 'eval "$(mise activate bash)"' >> ~/.bashrc
-    source ~/.bashrc
-    ```
+        # Update shell configuration
+        echo 'eval "$(mise activate bash)"' >> ~/.bashrc
+        source ~/.bashrc
+        ```
+    1. brew
+        ```bash
+        brew install mise
+        ```
+    1. Version check
+        ```bash
+        mise --version
+        ```
 
 1. **Node.js (LTS or higher recommended, installation via mise recommended)**
 
@@ -94,141 +101,195 @@ The following software must be installed:
 
 ### Installation Methods
 
+1. For details on each option, see [Option Details](#option-details)
+
 #### Method 1: Using ni (Recommended)
 
 ```bash
-# Create project using ni
-nlx create-specment@latest my-docs
-cd my-docs
+# Create project using ni (interactive setup will start)
+nlx create-specment@latest
+```
 
-# Install dependencies using ni
-ni
+After execution, the following options will be displayed, so select the necessary documents and features:
 
-# Start development server using ni
-nr start
+```bash
+◆  Please select display language / 表示言語を選択してください:
+│  ● English
+│  ○ 日本語
+└
+
+┌  🚀 Welcome to create-specment!
+Creating a new Docusaurus-based specification documentation project...
+│
+◆  Enter folder name (project name):
+│  _
+└
+
+◆  Which templates would you like to use? (Multiple selection)
+│  ◻ Project Analysis
+│  ◻ Requirements Specification
+│  ◻ External Design
+│  ◻ Internal Design
+│  ◻ API (Using Redocusaurus)
+└
+
+◆  Which additional features would you like to include?
+│  ◻ PlantUML
+│  ◻ Mermaid
+└
+```
+
+Once creation is complete, change to the folder and start in development mode after installation:
+
+```bash
+cd <folder-name> && ni && nr start
 ```
 
 #### Method 2: Using npx
 
 ```bash
-# Create project using the latest version
-npx create-specment@latest my-docs
-
-# Specify a specific template
-npx create-specment@latest my-docs --template api-spec
+# Start setup
+npx create-specment@latest
 ```
 
-#### Method 3: Global Installation
+1. For option details, see Method 1
 
-```bash
-# Install globally
-npm install -g create-specment
+## Interactive Setup
 
-# Create project
-create-specment my-docs
+When you run `create-specment`, the following options will be displayed sequentially:
+
+### 1. Display Language Selection
+
+```
+◆ Please select display language / 表示言語を選択してください:
+│ ● English
+│ ○ 日本語
 ```
 
-### Basic Usage
+1. Select the display language for the interface
+1. Subsequent questions will be displayed in the selected language
 
-1. **Create Project**
+### 2. Project Name Input
 
-    ```bash
-    nlx create-specment@latest my-docs
-    cd my-docs
-    ```
+```
+◆ Enter folder name (project name):
+│ _
+```
 
-1. **Interactive Setup**
+1. Enter the folder name for the project to be created
+1. This name will become the project directory name
 
-    Configure your project by answering the following questions:
+### 3. Template Selection (Multiple selection possible)
 
-    1. **Language Selection**: Choose display language (English/Japanese)
-    1. **Project Name**: Name of your documentation site
-    1. **Template Selection**: Choose templates based on your use case (multiple selection)
-    1. **Feature Selection**: Select the features you need
+```
+◆ Which templates would you like to use? (Multiple selection)
+│ ◻ Project Analysis (Provides structure for understanding project overview)
+│ ◻ Requirements Specification
+│ ◻ External Design
+│ ◻ Internal Design
+│ ◻ API (Using Redocusaurus)
+```
 
-1. **Start Development Server**
+1. Multiple templates can be selected simultaneously
+1. Each template is generated as an independent section
+1. At least one template must be selected
 
-    ```bash
-    # Install dependencies (if not automatically executed)
-    ni
+#### Project Analysis
 
-    # Start development server
-    nr start
-    ```
-
-1. **Build and Deploy**
-
-    ```bash
-    # Production build
-    nr build
-
-    # Local preview
-    nr serve
-    ```
-
-## Template List
-
-### 1. Classic Specification (classic-spec)
-General-purpose specification template. Provides basic document structure.
+Project overview and analysis template. Provides structure for understanding the overall picture of the project.
 
 **Use Cases**:
-1. General technical specifications
-1. Product specifications
-1. Basic documentation creation
+1. Project proposals
+1. Current state analysis reports
+1. SWOT analysis documents
 
-### 2. API Specification (api-spec)
-API specification template. Specialized for API documentation and OpenAPI specifications.
-
-**Use Cases**:
-1. REST API documentation
-1. OpenAPI specifications
-1. API reference guides
-
-### 3. Technical Specification (technical-spec)
-Technical specification template. Focused on detailed technical documentation and system design.
+#### Requirements Specification
+Requirements specification template. Allows systematic organization of functional and non-functional requirements.
 
 **Use Cases**:
-1. System requirements documentation
+1. System requirements specifications
 1. Functional specifications
 1. EARS format requirement descriptions
 
-### 4. Enterprise Specification (enterprise-spec)
-Enterprise specification template. Designed for large-scale enterprise documentation with comprehensive structure.
+#### External Design
+
+External design specification template. Specialized for interface design with external systems.
 
 **Use Cases**:
-1. Enterprise system architecture documentation
-1. Comprehensive project documentation
-1. Multi-stakeholder documentation
+1. System architecture design documents
+1. API design documents
+1. UI/UX design documents
 
-## Feature Selection
+#### Internal Design
 
-### PlantUML Integration
-Easily create UML diagrams and sequence diagrams.
+Internal design specification template. Specialized for detailed internal system design and algorithms.
 
-```plantuml
-@startuml
-Alice -> Bob: Hello
-Bob -> Alice: Hi!
-@enduml
+**Use Cases**:
+1. Detailed design documents
+1. Database design documents
+1. Algorithm specifications
+
+#### API
+
+1. Using [Redocusaurus](https://github.com/rohit-gohri/redocusaurus), you can display YAML format files written in OpenAPI specifications
+
+### 4. Additional Feature Selection
+
+```
+◆ Which additional features would you like to include?
+│ ◻ PlantUML (PlantUML diagram integration (UML diagrams and flowcharts))
+│ ◻ Mermaid
 ```
 
-### Redoc Integration
-Beautifully display OpenAPI specifications.
+1. **PlantUML**: Adds functionality to create UML diagrams and flowcharts
+1. **Mermaid**: Adds functionality to create diagrams within Markdown
+1. Both can be selected
 
-### Multilingual Support
-Support for creating documentation in multiple languages.
+#### PlantUML
+
+1. You can use [PlantUML](https://plantuml.com/) for UML diagrams and sequence diagrams
+1. Uses the Docusaurus theme [create-specment](https://www.npmjs.com/package/create-specment)
+    1. ※ Please refer to the README at the link for usage and precautions
+
+#### Mermaid
+
+1. Uses the Docusaurus theme [theme-mermaid](https://docusaurus.io/docs/api/themes/@docusaurus/theme-mermaid)
+
+#### Multilingual Support
+
+TBD: Plans to support document creation in multiple languages (if requested)
 
 ## Command Line Options
 
 ```bash
 create-specment [project-name] [options]
 
+Arguments:
+  project-name          Folder name for the project to be created (optional)
+                        When specified: Skip folder name input
+
 Options:
-  --template <template>  Template to use (classic-spec|api-spec|technical-spec|enterprise-spec)
+  -t, --template <template>  Template to use (project-analysis|requirements|external-design|internal-design|api-spec)
   --skip-install        Skip dependency installation
   --verbose             Show detailed logs
   -h, --help           Show help
   -V, --version        Show version
+```
+
+### Usage Examples
+
+```bash
+# Complete interactive setup (all options will be displayed)
+create-specment
+
+# Specify folder name and interactive setup (skip folder name input)
+create-specment my-docs
+
+# Completely non-interactive (skip folder name and template selection)
+create-specment my-docs --template requirements
+
+# Specify template only (folder name input will be displayed)
+create-specment --template api-spec
 ```
 
 ## Troubleshooting
@@ -293,28 +354,6 @@ nr start -- --port 3001
     1. The combination of mise + ni minimizes environment differences
     1. Running as a Linux environment within WSL provides an experience equivalent to macOS/Linux
 
-## Development Environment Setup
-
-To participate in project development:
-
-```bash
-# Clone repository
-git clone https://github.com/plenarc/create-specment.git
-cd create-specment
-
-# Install dependencies
-ni
-
-# Run in development mode
-nr dev
-
-# Run tests
-nr test
-
-# Build
-nr build
-```
-
 ## License
 
 MIT License - See the [LICENSE](LICENSE) file for details.
@@ -329,10 +368,16 @@ We welcome contributions to the project! See [CONTRIBUTING.md](CONTRIBUTING.md) 
 1. 💡 **Feature Requests**: [GitHub Discussions](https://github.com/plenarc/create-specment/discussions)
 1. 📖 **Documentation**: [Official Documentation](https://create-specment.dev)
 
-## Related Projects
+## 関連プロジェクト
 
 1. [Docusaurus](https://docusaurus.io/) - Static site generator
 1. [mise](https://mise.jdx.dev/) - Development environment management tool
 1. [ni](https://github.com/antfu/ni) - Package manager unification tool
 1. [PlantUML](https://plantuml.com/) - UML diagram creation tool
 1. [Redoc](https://redocly.github.io/redoc/) - OpenAPI specification display tool
+
+[npm-image]: https://img.shields.io/npm/v/create-specment.svg
+[npm-url]: https://www.npmjs.com/package/create-specment
+[npm-downloads-image]: https://img.shields.io/npm/dw/create-specment.svg
+[license-image]: https://img.shields.io/github/license/plenarc/create-specment.svg
+[license-url]: https://github.com/plenarc/create-specment/blob/main/LICENSE

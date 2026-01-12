@@ -1,7 +1,8 @@
 # create-specment
 
-[![NPM Package](.github/images/icons/npm-badge.svg)](https://www.npmjs.com/package/@plenarc/create-specment)
-[![MIT License](.github/images/icons/license-badge.svg)](LICENSE)
+[![npm version][npm-image]][npm-url]
+[![npm downlads][npm-downloads-image]][npm-url]
+[![License][license-image]][license-url]
 
 [English](README.md) | [日本語](README-jp.md)
 
@@ -9,7 +10,6 @@ Demo: https://plenarc.github.io/specment/
 
 1. 'specification' + 'document' => Specment
 1. Docusaurusベースの仕様書作成に特化したサイト生成ツール
-
 
 <div align="center">
   <table>
@@ -77,7 +77,6 @@ Demo: https://plenarc.github.io/specment/
         ```bash
         mise --version
         ```
-
 
 1. **Node.js (LTS以上推奨、mise経由でインストール推奨)**
 
@@ -156,6 +155,8 @@ npx create-specment@latest
 1. 選択肢の内容は方法1を参照
 
 ## 選択肢詳細
+
+1. create-specment を実行すると、以下のオプションが順番に表示されます
 
 ### 1. 表示言語選択
 
@@ -247,7 +248,7 @@ npx create-specment@latest
 #### PlantUML
 
 1. UML図やシーケンス図など、[PlantUML](https://plantuml.com/)が使えるようになります
-1. Docusaurusのテーマ[docusaurus-theme-plantuml](https://www.npmjs.com/package/docusaurus-theme-plantuml)を使用しています
+1. Docusaurusのテーマ[create-specment](https://www.npmjs.com/package/create-specment)を使用しています
     1. ※ 用法や注意点はリンク先のREADMEを参照してください
 
 #### Mermaid
@@ -374,3 +375,9 @@ MIT License - 詳細は [LICENSE](LICENSE) ファイルを参照してくださ�
 1. [ni](https://github.com/antfu/ni) - パッケージマネージャー統一ツール
 1. [PlantUML](https://plantuml.com/) - UML図作成ツール
 1. [Redoc](https://redocly.github.io/redoc/) - OpenAPI仕様書表示ツール
+
+[npm-image]: https://img.shields.io/npm/v/create-specment.svg
+[npm-url]: https://www.npmjs.com/package/create-specment
+[npm-downloads-image]: https://img.shields.io/npm/dw/create-specment.svg
+[license-image]: https://img.shields.io/github/license/plenarc/create-specment.svg
+[license-url]: https://github.com/plenarc/create-specment/blob/main/LICENSE
