@@ -7,7 +7,31 @@
 
 Demo: https://plenarc.github.io/specment/
 
-Docusaurusベースの仕様書作成に特化したインタラクティブなプロジェクト生成ツール
+1. 'specification' + 'document' => Specment
+1. Docusaurusベースの仕様書作成に特化したサイト生成ツール
+
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img src=".github/images/screenshots/overview.png" alt="Project Overview" width="250" />
+        <br>
+        <em>Example: Project Overview</em>
+      </td>
+      <td align="center">
+        <img src=".github/images/screenshots/as-is.png" alt="As-Is Current State Analysis" width="250" />
+        <br>
+        <em>Example: As-Is Current State Analysis</em>
+      </td>
+      <td align="center">
+        <img src=".github/images/screenshots/redoc.png" alt="As-Is Current State Analysis" width="250" />
+        <br>
+        <em>Example: Redoc (OpenAPI)</em>
+      </td>
+    </tr>
+  </table>
+</div>
 
 ## 概要
 
@@ -17,7 +41,7 @@ Docusaurusベースの仕様書作成に特化したインタラクティブな�
 
 1. 🚀 **インタラクティブセットアップ**: 質問に答えるだけでプロジェクトを生成
 1. 📋 **5つの専用テンプレート**: 用途に応じた最適なテンプレートを選択
-1. 🔧 **機能選択**: PlantUML、Redoc、検索、多言語対応などを選択可能
+1. 🔧 **機能選択**: PlantUML、Mermaid、多言語対応(TBD)などを選択可能
 1. 📝 **変数置換**: プロジェクト名や作成者情報を自動で置換
 1. 🎨 **Docusaurus互換**: 既存のDocusaurusエコシステムと完全互換
 
@@ -25,27 +49,38 @@ Docusaurusベースの仕様書作成に特化したインタラクティブな�
 
 ### 前提条件
 
-以下のソフトウェアがインストールされている必要があります:
+以下のソフトウェアがインストールされている前提で説明します:
 
 1. **WSL(Windows環境の場合)**
-    1. Windows環境では Windows Subsystem for Linux (WSL) の使用を強く推奨
+    1. Windows環境では Windows Subsystem for Linux (WSL) の使用を推奨
     1. Ubuntu 22.04 LTS 以上を推奨
+
     ```bash
     # WSL のインストール(Windows PowerShell で管理者権限で実行)
     wsl --install
     ```
 
 1. **mise(開発環境管理ツール)**
-    ```bash
-    # mise のインストール(Linux/macOS/WSL)
-    curl https://mise.run | sh
+    1. Linux/macOS/WSL
+        ```bash
+        curl https://mise.run | sh
 
-    # シェルの設定を更新
-    echo 'eval "$(mise activate bash)"' >> ~/.bashrc
-    source ~/.bashrc
-    ```
+        # シェルの設定を更新
+        echo 'eval "$(mise activate bash)"' >> ~/.bashrc
+        source ~/.bashrc
+        ```
+    1. brew
+        ```bash
+        brew install mise
+        ```
+    1. バージョンの確認
+        ```bash
+        mise --version
+        ```
+
 
 1. **Node.js (LTS以上推奨、mise経由でインストール推奨)**
+
     ```bash
     # mise を使用してNode.jsをインストール
     mise install node@lts
@@ -56,6 +91,7 @@ Docusaurusベースの仕様書作成に特化したインタラクティブな�
     ```
 
 1. **ni(パッケージマネージャー統一ツール)**
+
     ```bash
     # mise を使用してniのインストール
     mise use npm:@antfu/ni@latest
@@ -66,85 +102,99 @@ Docusaurusベースの仕様書作成に特化したインタラクティブな�
 
 ### インストール方法
 
-#### 方法1: ni を使用(推奨)
+1. 各選択肢の内容は[選択肢詳細](#選択肢詳細)を参照してください
+
+#### 方法1: niを使用(推奨)
 
 ```bash
-# ni を使用してプロジェクトを作成
-nlx create-specment@latest my-docs
-cd my-docs
-
-# ni を使用して依存関係をインストール
-ni
-
-# ni を使用して開発サーバーを起動
-nr start
+# niを使用してセットアップを開始
+nlx create-specment@latest
 ```
 
-#### 方法2: npx を使用
+実行後、以下の選択肢が表示されるので必要なドキュメント、機能を選択してください
 
 ```bash
-# 最新版を使用してプロジェクトを作成
-npx create-specment@latest my-docs
+◆  Please select display language / 表示言語を選択してください:
+│  ○ English
+│  ● 日本語
+└
 
-# 特定のテンプレートを指定
-npx create-specment@latest my-docs --template requirements
+┌  🚀 create-specmentへようこそ！
+Docusaurusベースの仕様書ドキュメントプロジェクトを作成します...
+│
+◆  作成先のフォルダー名(プロジェクト名)を入力してください:
+│  _
+└
+
+◆  どのテンプレートを使用しますか？（複数選択可）
+│  ◻ プロジェクト概要・分析
+│  ◻ 要件定義
+│  ◻ 外部設計
+│  ◻ 内部設計
+│  ◻ API (Redocusaurus使用)
+└
+
+◆  どの追加機能を含めますか？
+│  ◻ PlantUML
+│  ◻ Mermaid
+└
 ```
 
-#### 方法3: グローバルインストール
+作成が完了したら、フォルダーを変更してインストール後に開発モードで起動
 
 ```bash
-# グローバルにインストール
-npm install -g create-specment
-
-# プロジェクトを作成
-create-specment my-docs
+cd <フォルダー名> && ni && nr start
 ```
 
-### 基本的な使用方法
+#### 方法2: npxを使用
 
-1. **プロジェクトの作成**
-    ```bash
-    nlx create-specment@latest my-docs
-    cd my-docs
-    ```
+```bash
+# セットアップを開始
+npx create-specment@latest
+```
 
-1. **インタラクティブセットアップ**
+1. 選択肢の内容は方法1を参照
 
-    以下の質問に答えてプロジェクトを設定します:
+## 選択肢詳細
 
-    1. **プロジェクト名**: ドキュメントサイトの名前
-    1. **テンプレート選択**: 用途に応じたテンプレートを選択
-    1. **機能選択**: 必要な機能を選択
+### 1. 表示言語選択
 
-1. **開発サーバーの起動**
-    ```bash
-    # 依存関係のインストール(自動実行されない場合)
-    ni
+```
+◆ Please select display language / 表示言語を選択してください:
+│ ● English
+│ ○ 日本語
+```
 
-    # 開発サーバーを起動
-    nr start
-    ```
+1. インターフェースの表示言語を選択します
+1. 選択した言語でその後の質問が表示されます
 
-1. **ビルドとデプロイ**
-    ```bash
-    # 本番用ビルド
-    nr build
+### 2. フォルダー名入力
 
-    # ローカルでプレビュー
-    nr serve
-    ```
+```
+◆ 作成先のフォルダー名(プロジェクト名)を入力してください:
+│ _
+```
 
-## テンプレート一覧
+1. 作成するプロジェクトのフォルダー名を入力します
+1. ここに入力された名前でフォルダーを作成します
 
-### 1. Classic Specification(classic-spec)
-汎用的な仕様書テンプレート。基本的なドキュメント構造を提供します。
+### 3. テンプレート選択 (複数選択可)
 
-**適用場面**:
-1. 一般的な技術仕様書
-1. プロダクト仕様書
-1. 基本的なドキュメント作成
+```
+◆ どのテンプレートを使用しますか？(複数選択可)
+│ ◻ プロジェクト概要・分析
+│ ◻ 要件定義
+│ ◻ 外部設計
+│ ◻ 内部設計
+│ ◻ API (Redocusaurus使用)
+```
 
-### 2. Project Analysis(project-analysis)
+1. 複数のテンプレートを同時に選択可能です
+1. 各テンプレートは独立したセクションとして生成されます
+1. 最低1つのテンプレートを選択する必要があります
+
+#### プロジェクト概要・分析
+
 プロジェクト概要・分析用テンプレート。プロジェクトの全体像を把握するための構造を提供します。
 
 **適用場面**:
@@ -152,7 +202,7 @@ create-specment my-docs
 1. 現状分析レポート
 1. SWOT分析ドキュメント
 
-### 3. Requirements Specification(requirements)
+#### 要件定義
 要件定義書テンプレート。機能要件・非機能要件を体系的に整理できます。
 
 **適用場面**:
@@ -160,7 +210,8 @@ create-specment my-docs
 1. 機能仕様書
 1. EARS形式での要件記述
 
-### 4. External Design(external-design)
+#### 外部設計
+
 外部設計書テンプレート。システム外部とのインターフェース設計に特化しています。
 
 **適用場面**:
@@ -168,7 +219,8 @@ create-specment my-docs
 1. API設計書
 1. UI/UX設計書
 
-### 5. Internal Design(internal-design)
+#### 内部設計
+
 内部設計書テンプレート。システム内部の詳細設計とアルゴリズムに特化しています。
 
 **適用場面**:
@@ -176,35 +228,67 @@ create-specment my-docs
 1. データベース設計書
 1. アルゴリズム仕様書
 
-## 機能選択
+#### API
 
-### PlantUML統合
-UML図やシーケンス図を簡単に作成できます。
+1. [Redocusaurus](https://github.com/rohit-gohri/redocusaurus)を使って、OpenAPI仕様書で書かれたyaml形式のファイルが表示できるようになります
 
-```plantuml
-@startuml
-Alice -> Bob: Hello
-Bob -> Alice: Hi!
-@enduml
+### 4. 追加機能選択
+
+```
+◆ どの追加機能を含めますか？
+│ ◻ PlantUML
+│ ◻ Mermaid
 ```
 
-### Redoc統合
-OpenAPI仕様書を美しく表示できます。
+1. **PlantUML**: UML図やフローチャートを作成できる機能を追加
+1. **Mermaid**: Markdown内で図表を作成できる機能を追加
+1. 両方選択することも可能です
 
-### 多言語対応
-複数言語でのドキュメント作成をサポートします。
+#### PlantUML
+
+1. UML図やシーケンス図など、[PlantUML](https://plantuml.com/)が使えるようになります
+1. Docusaurusのテーマ[docusaurus-theme-plantuml](https://www.npmjs.com/package/docusaurus-theme-plantuml)を使用しています
+    1. ※ 用法や注意点はリンク先のREADMEを参照してください
+
+#### Mermaid
+
+1. Docusaurusのテーマ[theme-mermaid](https://docusaurus.io/docs/api/themes/@docusaurus/theme-mermaid)を使用しています
+
+#### 多言語対応
+
+TBD: 複数言語でのドキュメント作成をサポートする予定(要望があれば)
 
 ## コマンドラインオプション
 
 ```bash
 create-specment [project-name] [options]
 
+Arguments:
+  project-name          作成するプロジェクトのフォルダー名 (省略可)
+                        指定時: フォルダー名入力をスキップ
+
 Options:
-  --template <template>  使用するテンプレート (classic-spec|project-analysis|requirements|external-design|internal-design)
+  -t, --template <template>  使用するテンプレート (project-analysis|requirements|external-design|internal-design|api-spec)
   --skip-install        依存関係のインストールをスキップ
   --verbose             詳細なログを表示
   -h, --help           ヘルプを表示
   -V, --version        バージョンを表示
+```
+
+### 使用例
+
+```bash
+# 完全インタラクティブセットアップ (全ての選択肢が表示される)
+create-specment
+
+# フォルダー名を指定してインタラクティブセットアップ (フォルダー名入力をスキップ)
+create-specment my-docs
+
+# 完全に非インタラクティブ (フォルダー名とテンプレート選択をスキップ)
+create-specment my-docs --template requirements
+
+# テンプレートのみ指定 (フォルダー名入力は表示される)
+create-specment --template api-spec
 ```
 
 ## トラブルシューティング
@@ -212,11 +296,13 @@ Options:
 ### よくある問題
 
 #### 1. Node.jsのバージョンエラー
+
 ```bash
 Error: Node.js version 20.0 or higher is required
 ```
 
 **解決方法**:
+
 ```bash
 # Node.jsのバージョンを確認
 node --version
@@ -227,11 +313,13 @@ mise use node@latest
 ```
 
 #### 2. パッケージインストールエラー
+
 ```bash
 Error: Failed to install dependencies
 ```
 
 **解決方法**:
+
 ```bash
 # キャッシュをクリア
 ni clean
@@ -243,11 +331,13 @@ ni
 ```
 
 #### 3. ポート競合エラー
+
 ```bash
 Error: Port 3000 is already in use
 ```
 
 **解決方法**:
+
 ```bash
 # 別のポートを指定
 nr start -- --port 3001
@@ -255,35 +345,13 @@ nr start -- --port 3001
 
 ### Windows環境での注意事項
 
-1. **WSL の使用を強く推奨**
-    1. Windows環境では WSL (Windows Subsystem for Linux) の使用を強く推奨します
+1. **WSLの使用を推奨**
+    1. Windows環境では WSL (Windows Subsystem for Linux) の使用を推奨します
     1. PowerShellやコマンドプロンプトでの動作は保証されません
     1. Ubuntu 22.04 LTS 以上を推奨
 1. **開発環境の統一**
     1. mise + ni の組み合わせにより、環境差異を最小限に抑制
-    1. WSL内でLinux環境として動作させることで、macOS/Linuxと同等の体験を提供
-
-## 開発環境のセットアップ
-
-プロジェクトの開発に参加する場合:
-
-```bash
-# リポジトリをクローン
-git clone https://github.com/plenarc/create-specment.git
-cd create-specment
-
-# 依存関係をインストール
-ni
-
-# 開発モードで実行
-nr dev
-
-# テストを実行
-nr test
-
-# ビルド
-nr build
-```
+    1. WSLを使用することでmacOS/Linux環境に近い環境に統一
 
 ## ライセンス
 
