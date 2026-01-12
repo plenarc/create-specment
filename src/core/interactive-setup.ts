@@ -67,8 +67,8 @@ export class InteractiveSetup {
   }
 
   private async getProjectName(initialName?: string): Promise<string> {
-    // Non-interactive mode with template option - still validate the name
-    if (initialName && this.options.template) {
+    // If initialName is provided, validate and use it directly (skip prompt)
+    if (initialName) {
       // Validate the provided name
       if (!/^[a-zA-Z0-9-_]+$/.test(initialName)) {
         throw new Error(
@@ -78,22 +78,13 @@ export class InteractiveSetup {
       return initialName;
     }
 
-    // If initialName is provided but no template, still validate
-    if (initialName) {
-      if (!/^[a-zA-Z0-9-_]+$/.test(initialName)) {
-        throw new Error(
-          `Invalid project name: ${initialName}. Only alphanumeric characters, hyphens, and underscores are allowed`,
-        );
-      }
-    }
-
     const isEn = this.selectedLanguage === LANG.EN.code;
     const folderName = await text({
       message: isEn ? 'Enter folder name (project name):' : '作成先のフォルダー名(プロジェクト名)を入力してください:',
-      defaultValue: initialName || 'docs',
+      defaultValue: 'docs',
       validate: (value: string) => {
         if (!value.trim()) {
-          return isEn ? 'Folder name is required' : 'フォルダー名';
+          return isEn ? 'Folder name is required' : 'フォルダー名が必要です';
         }
         if (!/^[a-zA-Z0-9-_]+$/.test(value)) {
           return isEn
