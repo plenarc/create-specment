@@ -368,7 +368,7 @@ We welcome contributions to the project! See [CONTRIBUTING.md](CONTRIBUTING.md) 
 1. 💡 **Feature Requests**: [GitHub Discussions](https://github.com/plenarc/create-specment/discussions)
 1. 📖 **Documentation**: [Official Documentation](https://create-specment.dev)
 
-## 関連プロジェクト
+## Related projects
 
 1. [Docusaurus](https://docusaurus.io/) - Static site generator
 1. [mise](https://mise.jdx.dev/) - Development environment management tool
