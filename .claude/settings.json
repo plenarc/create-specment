@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls ~/projects/specment && echo \"---\" && ls ~/projects/create-specment)",
+      "Read(//home/ohbayashi/projects/specment/**)",
+      "Bash(cp ~/projects/specment/src/pages/index.tsx ~/projects/create-specment/templates/docs/index.tsx && echo \"index.tsx updated\")",
+      "Bash(pnpm run *)"
+    ],
+    "additionalDirectories": [
+      "/home/ohbayashi/projects/specment/src/pages"
+    ]
+  }
+}
