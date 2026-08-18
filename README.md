@@ -45,6 +45,37 @@ Demo: https://plenarc.github.io/specment/
 1. 📝 **Variable Substitution**: Automatically replace project names and author information
 1. 🎨 **Docusaurus Compatible**: Fully compatible with the existing Docusaurus ecosystem
 
+## AI Agent Integration
+
+For AI agents like Claude Code or Cursor to read your specification documents, they need to be **text files managed in Git**.
+
+specment manages Docusaurus-based Markdown specs in a Git repository, making them directly available as agent context.
+
+### Claude Code Integration Example
+
+Simply reference the spec directory from your project's `CLAUDE.md`, and Claude Code will read your specs to assist with implementation.
+
+```md
+# CLAUDE.md
+
+## Specification Documents
+
+Screens: `docs/external/screens/`
+Tables: `docs/external/tables/`
+API Spec: `docs/external/api/`
+```
+
+```bash
+# Claude Code reads specs and generates code
+claude "Implement the user registration screen"
+```
+
+### What Makes Specs Agent-Readable
+
+1. **Markdown format** - Text-based, directly readable by LLMs
+1. **Git-managed** - Change history synced with code
+1. **Structured directories** - Organized by feature/phase for easy reference
+
 ## Installation Guide
 
 ### Prerequisites
