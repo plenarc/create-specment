@@ -5,11 +5,18 @@ export function generateDocusaurusConfig(selections: UserSelections): string {
   const enabledFeatures = features.filter((f) => f.enabled);
 
   // 機能フラグ
-  const hasPlantUML = enabledFeatures.some(f => f.name === 'plantuml');
-  const hasMermaid = enabledFeatures.some(f => f.name === 'mermaid');
-  const hasRedoc = enabledFeatures.some(f => f.name === 'redoc');
+  const hasPlantUML = enabledFeatures.some((f) => f.name === 'plantuml');
+  const hasMermaid = enabledFeatures.some((f) => f.name === 'mermaid');
+  const hasRedoc = enabledFeatures.some((f) => f.name === 'redoc');
 
-  return generateConfigString(templates, enabledFeatures, hasPlantUML, hasMermaid, hasRedoc, projectName);
+  return generateConfigString(
+    templates,
+    enabledFeatures,
+    hasPlantUML,
+    hasMermaid,
+    hasRedoc,
+    projectName,
+  );
 }
 
 const makeI18n = (): string => {
@@ -22,10 +29,12 @@ const makeI18n = (): string => {
 };
 
 const makeMarkdown = (hasMermaid: boolean): string => {
-  return hasMermaid ? `
+  return hasMermaid
+    ? `
   markdown: {
     mermaid: true,
-  },` : '';
+  },`
+    : '';
 };
 
 const makePresets = (hasRedoc: boolean): string => {
@@ -59,10 +68,7 @@ const makePresets = (hasRedoc: boolean): string => {
     ]`,
   };
 
-  return [
-    baseText.classic,
-    hasRedoc && baseText.redoc,
-  ].filter(Boolean).join(',\n    ');
+  return [baseText.classic, hasRedoc && baseText.redoc].filter(Boolean).join(',\n    ');
 };
 
 const makeThemes = (hasPlantUML: boolean, hasMermaid: boolean): string => {
@@ -79,18 +85,15 @@ const makeThemes = (hasPlantUML: boolean, hasMermaid: boolean): string => {
     mermaid: `'@docusaurus/theme-mermaid'`,
   };
 
-  return [
-    baseText.search,
-    hasPlantUML && baseText.plantUML,
-    hasMermaid && baseText.mermaid,
-  ].filter(Boolean).join(',\n    ');
+  return [baseText.search, hasPlantUML && baseText.plantUML, hasMermaid && baseText.mermaid]
+    .filter(Boolean)
+    .join(',\n    ');
 };
-
 
 const makeNavbarItems = (templates: any[], enabledFeatures: any[]): string => {
   const templateNavItems: Record<string, { label: string; docId: string }> = {
     'project-analysis': { label: 'プロジェクト概要・分析', docId: 'overview/index' },
-    'requirements': { label: '要件定義', docId: 'requirements/index' },
+    requirements: { label: '要件定義', docId: 'requirements/index' },
     'external-design': { label: '外部設計', docId: 'external/index' },
     'internal-design': { label: '内部設計', docId: 'internal/index' },
   };
@@ -112,7 +115,7 @@ const makeNavbarItems = (templates: any[], enabledFeatures: any[]): string => {
   }
 
   // redoc機能が有効な場合はAPIリンクを追加
-  const hasRedocFeature = enabledFeatures.some(f => f.name === 'redoc');
+  const hasRedocFeature = enabledFeatures.some((f) => f.name === 'redoc');
   if (hasRedocFeature) {
     navbarItems += `
         {
@@ -132,9 +135,16 @@ const makeNavbarItems = (templates: any[], enabledFeatures: any[]): string => {
       ]`;
 
   return navbarItems;
-}
+};
 
-function generateConfigString(templates: any[], enabledFeatures: any[], hasPlantUML: boolean, hasMermaid: boolean, hasRedoc: boolean, projectName: string): string {
+function generateConfigString(
+  templates: any[],
+  enabledFeatures: any[],
+  hasPlantUML: boolean,
+  hasMermaid: boolean,
+  hasRedoc: boolean,
+  projectName: string,
+): string {
   const i18n = makeI18n();
   const markdown = makeMarkdown(hasMermaid);
   const presets = makePresets(hasRedoc);
