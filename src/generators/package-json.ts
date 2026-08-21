@@ -40,10 +40,7 @@ export function generatePackageJson(selections: UserSelections): any {
  * 条件付きセクションを処理する
  * {{#condition}}...{{/condition}} の形式で条件分岐を処理
  */
-function processConditionalSections(
-  content: string,
-  conditions: Record<string, boolean>
-): string {
+function processConditionalSections(content: string, conditions: Record<string, boolean>): string {
   let result = content;
 
   // 各条件について処理
@@ -52,7 +49,10 @@ function processConditionalSections(
     const endTag = `{{/${conditionName}}}`;
 
     // 条件付きセクションを検索
-    const regex = new RegExp(`\\{\\{#${conditionName}\\}\\}([\\s\\S]*?)\\{\\{\\/${conditionName}\\}\\}`, 'g');
+    const regex = new RegExp(
+      `\\{\\{#${conditionName}\\}\\}([\\s\\S]*?)\\{\\{\\/${conditionName}\\}\\}`,
+      'g',
+    );
 
     if (isEnabled) {
       // 条件が真の場合、タグを削除してコンテンツを残す

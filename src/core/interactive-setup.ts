@@ -80,7 +80,9 @@ export class InteractiveSetup {
 
     const isEn = this.selectedLanguage === LANG.EN.code;
     const folderName = await text({
-      message: isEn ? 'Enter folder name (project name):' : '作成先のフォルダー名(プロジェクト名)を入力してください:',
+      message: isEn
+        ? 'Enter folder name (project name):'
+        : '作成先のフォルダー名(プロジェクト名)を入力してください:',
       defaultValue: 'docs',
       validate: (value: string) => {
         if (!value.trim()) {
@@ -171,7 +173,7 @@ export class InteractiveSetup {
     }
 
     // APIテンプレートが選択されている場合の特別処理
-    const hasApiTemplate = templates.some(template => template.name === 'api-spec');
+    const hasApiTemplate = templates.some((template) => template.name === 'api-spec');
     const autoEnabledFeatures = new Set<string>();
 
     if (hasApiTemplate) {
@@ -180,8 +182,8 @@ export class InteractiveSetup {
     }
 
     // 自動有効化される機能は選択肢から除外
-    const supportedFeatures = availableFeatures.filter((feature) =>
-      allSupportedFeatures.has(feature.name) && !autoEnabledFeatures.has(feature.name)
+    const supportedFeatures = availableFeatures.filter(
+      (feature) => allSupportedFeatures.has(feature.name) && !autoEnabledFeatures.has(feature.name),
     );
 
     if (supportedFeatures.length === 0) {
