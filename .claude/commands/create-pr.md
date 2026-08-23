@@ -1,34 +1,27 @@
----
-description: 現在のブランチから draft PR を作成する。issue特定→Closes/チェックリスト転記→ラベル付与まで。
----
+# draft PR を作成する（create-specment）
 
-commit & push 済みであることが前提。
+グローバルの `/create-pr` に加え、このリポジトリ固有の手順を実施する。
 
-## 1. issue の特定
+## ベースブランチ（グローバル手順 3 を上書き）
 
-- `git branch --show-current` のブランチ名の `#{issue}` 部分から対象 issue 番号を取得する。
-- `gh issue view {issue}` で本文・チェックリスト・種別を確認する。
+このワークスペースに `develop` ブランチは存在しない。ベースブランチは常に `main`。
 
-## 2. PR 作成
+## lint / format（グローバル手順 2 を上書き）
 
-- `gh pr create --draft --base main --assignee @me` で作成する。
-- タイトルは Conventional Commits 準拠の要約にする。
-- 本文に必ず `Closes #{issue}` を含める。
+PR 作成前に以下を実行する:
 
-## 3. チェックリスト転記
+```bash
+nr format
+nr lint
+```
 
-- issue のチェックリスト項目を PR 本文のチェックリストに `- [ ]` 形式で転記する。
+GitHub Actions の `test.yaml` でも同チェックが走るが、push 前にローカルで先に確認しておく。
+エラーが残る場合は中断してユーザーに報告する。
 
-## 4. ラベル付与
+## GitHub Actions について
 
-種別に応じてラベルを付与する:
+PR 作成後に以下のワークフローが自動実行される:
 
-- 機能 → `enhancement`
-- バグ → `bug`
-- ドキュメント修正を含む → `documentation`
+- `test.yaml`: typecheck → format → lint → test → build
 
-ラベルが存在しなければ `gh label create` で作成してから付与する。
-
-## 5. 案内
-
-完了後「/verify-pr 可能です」と伝える。
+`gh pr checks --watch` で結果を監視し、失敗した場合はエラー内容をユーザーに報告する。
