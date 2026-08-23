@@ -45,6 +45,37 @@ Demo: https://plenarc.github.io/specment/
 1. 📝 **変数置換**: プロジェクト名や作成者情報を自動で置換
 1. 🎨 **Docusaurus互換**: 既存のDocusaurusエコシステムと完全互換
 
+## AI エージェントとの連携
+
+Claude Code や Cursor などの AI エージェントに仕様書を読ませるには、**仕様書が Git 管理されたテキストファイルであること**が前提です。
+
+specment は Docusaurus ベースの Markdown 仕様書を Git リポジトリで管理するため、そのままエージェントのコンテキストに渡せます。
+
+### Claude Code との連携例
+
+プロジェクトルートの `CLAUDE.md` から仕様書ディレクトリを参照するだけで、Claude Code が仕様書を読んで実装を支援します。
+
+```md
+# CLAUDE.md
+
+## 仕様書
+
+画面定義: `docs/external/screens/`
+テーブル定義: `docs/external/tables/`
+API仕様: `docs/external/api/`
+```
+
+```bash
+# Claude Code が仕様書を参照しながらコードを生成
+claude "ユーザー登録画面の実装をしてください"
+```
+
+### エージェントが読める仕様書の特徴
+
+1. **Markdown 形式** - テキストベースで LLM が直接読める
+1. **Git 管理** - 変更履歴がコードと同期される
+1. **構造化されたディレクトリ** - 機能・フェーズ別に整理されて参照しやすい
+
 ## 導入手順
 
 ### 前提条件
