@@ -9,6 +9,7 @@ import { createTemplateProcessor, type TemplateProcessor } from '../utils/templa
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const TEMPLATE_DOCS_PATH = resolve(__dirname, '../../templates/docs');
+const TEMPLATE_OPENAPI_PATH = resolve(__dirname, '../../templates/openapi');
 
 export async function copyTemplateFiles(
   selections: UserSelections,
@@ -342,14 +343,14 @@ async function generateOpenAPIFiles(projectPath: string): Promise<void> {
   const openapiDir = join(projectPath, 'openapi');
   await mkdir(openapiDir, { recursive: true });
 
-  // 参考リポジトリのOpenAPIファイルをコピー
-  const referenceOpenAPIPath = '/home/ohbayashi/projects/specment/openapi/openapi-single.yaml';
+  // テンプレートのOpenAPIファイルをコピー
+  const referenceOpenAPIPath = join(TEMPLATE_OPENAPI_PATH, 'openapi-single.yaml');
   const targetOpenAPIPath = join(openapiDir, 'openapi-single.yaml');
 
   if (existsSync(referenceOpenAPIPath)) {
     try {
       await cp(referenceOpenAPIPath, targetOpenAPIPath);
-      console.log('Copied OpenAPI specification from reference repository');
+      console.log('Copied OpenAPI specification from templates/openapi');
     } catch (error) {
       console.warn(`Failed to copy OpenAPI file: ${error}`);
       // フォールバック: サンプルOpenAPIファイルを生成
